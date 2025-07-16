@@ -37,6 +37,9 @@ def main():
     if not quarto_files_path.exists():
         print(f"Quarto file {quarto_files_path} does not exist. Please check the configuration.")
         return
+    
+    subprocess.run(['./script_test.sh'], check=True)  # Assuming script_test.sh handles the rendering
+
     subprocess.run(['quarto', 'render', str(quarto_files_path)], check=True)
 
     # Step 3: Update the index.html file
