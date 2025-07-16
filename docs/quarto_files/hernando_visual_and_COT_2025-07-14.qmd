@@ -32,7 +32,6 @@ import matplotlib.pyplot as plt
 from lecilab_behavior_analysis.figure_maker import subject_progress_figure
 import lecilab_behavior_analysis.df_transforms as dft
 import lecilab_behavior_analysis.plots as plots
-from ydata_profiling import ProfileReport
 import seaborn as sns
 import plotly.express as px
 from lecilab_behavior_analysis.figure_maker import session_summary_figure
