@@ -21,6 +21,8 @@ jupyter: python3
 ::: {.panel-tabset}
 # Overview
 
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
 ```{python}
 import pandas as pd
 import numpy as np

@@ -1,4 +1,8 @@
 # [[[subject]]]
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Summary of the subject's full training history
 ```{python}
 mouse = "[[[subject]]]"
 subject_df = df[df['subject'] == mouse]
@@ -6,6 +10,8 @@ fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=
 plt.close('all')
 fig1
 ```
+
+Analysis of data from [[[date]]]
 ```{python}
 date = "[[[date]]]"
 subject_df = add_day_column_to_df(subject_df)

@@ -44,7 +44,7 @@ def generate_quarto_file(config_file: str, date: str) -> None:
 
     # write the final content to a .qmd file
     config_file_name = Path(config_file).stem
-    output_file = Path(__file__).parent / "docs" / "quarto_files" / f"{config_file_name}_{date}.qmd"
+    output_file = Path(__file__).parent.parent / "docs" / "quarto_files" / f"{config_file_name}_{date}.qmd"
     with open(output_file, 'w') as f:
         f.write(quarto_content)
 
