@@ -38,7 +38,8 @@ def main():
         print(f"Quarto file {quarto_files_path} does not exist. Please check the configuration.")
         return
     
-    subprocess.run(['/home/training_village/script_test.sh'], check=True)  # Assuming script_test.sh handles the rendering
+    # this was for debugging purposes, to be removed later
+    # subprocess.run(['/home/training_village/script_test.sh'], check=True)  # Assuming script_test.sh handles the rendering
 
     subprocess.run(['quarto', 'render', str(quarto_files_path)], check=True)
 

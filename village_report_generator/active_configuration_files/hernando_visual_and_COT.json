@@ -2,9 +2,17 @@
     "project_name": "visual_and_COT_data",
     "subjects": [
         "ACV001",
-        "ACV002"
+        "ACV002",
+        "ACV003",
+        "ACV004",
+        "ACV005",
+        "ACV006",
+        "ACV007",
+        "ACV008",
+        "ACV009",
+        "ACV010"
     ],
-    "general_template": "visual_and_COT_quarto_general_template_test.txt",
+    "general_template": "visual_and_COT_quarto_general_template.txt",
     "subject_template": "visual_and_COT_quarto_subject_template.txt"
 
 }
