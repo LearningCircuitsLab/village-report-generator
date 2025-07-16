@@ -1,0 +1,21 @@
+# [[[subject]]]
+```{python}
+mouse = "[[[subject]]]"
+subject_df = df[df['subject'] == mouse]
+fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
+plt.close('all')
+fig1
+```
+```{python}
+date = "[[[date]]]"
+subject_df = add_day_column_to_df(subject_df)
+subject_df = add_trial_of_day_column_to_df(subject_df)
+sdf = subject_df[subject_df["year_month_day"] == date]
+try:
+    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10)
+    plt.close('all')
+    display(fig)
+except (KeyError, ValueError) as e:
+    plt.close('all')
+    print(f"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}")
+```
