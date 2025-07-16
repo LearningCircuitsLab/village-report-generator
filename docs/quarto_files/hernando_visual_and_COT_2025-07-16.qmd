@@ -1,0 +1,131 @@
+---
+title: "📊 visual_and_COT_data Report"
+date: today
+format:
+  html:
+    theme: lux
+    toc: true
+    toc-depth: 2
+    page-layout: custom
+    css: styles.css
+    code-tools: false
+    smooth-scroll: true
+    anchor-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  fig-align: center
+jupyter: python3
+---
+::: {.panel-tabset}
+# Overview
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+
+```{python}
+import pandas as pd
+import numpy as np
+import lecilab_behavior_analysis.utils as utils
+from pathlib import Path
+import matplotlib.pyplot as plt
+from lecilab_behavior_analysis.figure_maker import subject_progress_figure
+import lecilab_behavior_analysis.df_transforms as dft
+import lecilab_behavior_analysis.plots as plots
+import seaborn as sns
+import plotly.express as px
+from lecilab_behavior_analysis.figure_maker import session_summary_figure
+from lecilab_behavior_analysis.df_transforms import add_trial_of_day_column_to_df, add_day_column_to_df
+
+from datetime import date
+today = date.today()
+today_date = today.strftime("%Y-%m-%d")
+
+subjects = ['ACV001', 'ACV002']
+df_list = []
+for mouse in subjects:    
+    local_path = Path(utils.get_outpath()) / Path("visual_and_COT_data") / Path("sessions") / Path(mouse)
+    df = pd.read_csv(local_path / Path(f'{mouse}.csv'), sep=";")
+    df_list.append(dft.get_performance_through_trials(df, window=50))
+df = pd.concat(df_list, ignore_index=True)
+df = dft.analyze_df(df)
+```
+
+```{python}
+fig = px.line(df, x='total_trial', y='performance_w', color='subject')
+plt.close('all')
+fig
+```
+
+Table depicting the number of trials in every training stage for each mice
+```{python}
+df['current_training_stage'] = df['current_training_stage'].replace('not saved', 'Habituation')
+tr_stage_df = df.groupby(['subject', 'current_training_stage']).size().unstack(fill_value=0).reset_index()
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.axis('off')
+table = ax.table(cellText=tr_stage_df.values,
+                 colLabels=tr_stage_df.columns,
+                 loc='center',
+                 cellLoc='center')
+table.auto_set_font_size(False)
+table.set_fontsize(8)
+table.scale(1, 1.5)
+plt.tight_layout()
+
+```
+# ACV001
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Summary of the subject's full training history
+```{python}
+mouse = "ACV001"
+subject_df = df[df['subject'] == mouse]
+fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
+plt.close('all')
+fig1
+```
+
+Analysis of data from 2025-07-16
+```{python}
+date = "2025-07-16"
+subject_df = add_day_column_to_df(subject_df)
+subject_df = add_trial_of_day_column_to_df(subject_df)
+sdf = subject_df[subject_df["year_month_day"] == date]
+try:
+    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10)
+    plt.close('all')
+    display(fig)
+except (KeyError, ValueError) as e:
+    plt.close('all')
+    print(f"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}")
+```
+
+# ACV002
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Summary of the subject's full training history
+```{python}
+mouse = "ACV002"
+subject_df = df[df['subject'] == mouse]
+fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
+plt.close('all')
+fig1
+```
+
+Analysis of data from 2025-07-16
+```{python}
+date = "2025-07-16"
+subject_df = add_day_column_to_df(subject_df)
+subject_df = add_trial_of_day_column_to_df(subject_df)
+sdf = subject_df[subject_df["year_month_day"] == date]
+try:
+    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10)
+    plt.close('all')
+    display(fig)
+except (KeyError, ValueError) as e:
+    plt.close('all')
+    print(f"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}")
+```
