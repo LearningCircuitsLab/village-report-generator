@@ -19,6 +19,9 @@ def generate_index_html_with_calendar():
             date_to_file_map[date_obj.date()] = html_file
         except ValueError:
             pass
+    
+    # Find the common name for the html files
+    common_name = html_files[0][:-16]
 
     # Create a DataFrame for the calendar
     df = pd.DataFrame({
@@ -31,8 +34,8 @@ def generate_index_html_with_calendar():
         df,
         x="date",
         y="value",
-        title="Village Report Calendar",
-        colorscale="Viridis",
+        title=common_name + " Calendar",
+        colorscale="Greys",
     )
 
     # Inject customdata (the date strings) into each day's data
@@ -47,14 +50,19 @@ def generate_index_html_with_calendar():
     index_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Village Report Generator</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
 <body>
-    <h1>Village Report Generator</h1>
-    <p>Click on a date in the calendar to view the corresponding report:</p>
+        <header style="text-align: center; margin-bottom: 20px;">
+            <h1 style="font-family: Arial, sans-serif; color: #2a3f5f;">Training Village Reports</h1>
+            <img src="assets/logo.png" alt="Village Report Logo" style="width: 150px; height: auto; margin-top: 10px;">
+        </header>
+        <main style="font-family: Arial, sans-serif; color: #4a4a4a; line-height: 1.6;">
+            <p style="text-align: center; font-size: 18px;">
+                Use the interactive calendar below to select a date and view the corresponding report.
+            </p>
+            <p style="text-align: center; font-size: 16px;">
+                For more information, visit the <a href="https://github.com/LearningCircuitsLab/village-report-generator" style="color: #007bff; text-decoration: none;">Github repo</a>.
+            </p>
+            </br>
     {calendar_html}
     <script>
         var calendarDiv = document.getElementById('calendar_plot');

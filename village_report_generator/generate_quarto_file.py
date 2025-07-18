@@ -32,6 +32,8 @@ def generate_quarto_file(config_file: str, date: str) -> None:
     quarto_content = quarto_content.replace('[[[project_name]]]', config_dict['project_name'])
     # substitute the subjects in the general template
     quarto_content = quarto_content.replace('[[[subjects]]]', str(config_dict['subjects']))
+    # substitute the date in the general template
+    quarto_content = quarto_content.replace('[[[date]]]', date)
 
     # for each subject, substitute the subject and date and append to the content
     for subject in config_dict['subjects']:
@@ -41,6 +43,8 @@ def generate_quarto_file(config_file: str, date: str) -> None:
 
         # append the subject content to the general content
         quarto_content += '\n' + subject_content
+    
+    quarto_content += '\n' + ":::"
 
     # write the final content to a .qmd file
     config_file_name = Path(config_file).stem
