@@ -25,7 +25,9 @@ def main():
     config_file = config_files[0]  # Assuming only one config file is present
     print(f"Using configuration file: {config_file}")
     # Get today's date in YYYY-MM-DD format
-    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    todays_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    # date will be the previous day
+    date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     print(f"Generating report for date: {date}")
     # Generate the quarto file
     generate_quarto_file(config_file, date)
