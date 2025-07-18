@@ -4,6 +4,7 @@
 
 Summary of the subject's full training history
 ```{python}
+#| label: subject_summary
 mouse = "[[[subject]]]"
 subject_df = df[df['subject'] == mouse]
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
@@ -13,6 +14,7 @@ fig1
 
 Analysis of data from [[[date]]]
 ```{python}
+#| label: date_summary
 date = "[[[date]]]"
 subject_df = add_day_column_to_df(subject_df)
 subject_df = add_trial_of_day_column_to_df(subject_df)

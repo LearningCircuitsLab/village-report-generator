@@ -43,6 +43,8 @@ def generate_quarto_file(config_file: str, date: str) -> None:
 
         # append the subject content to the general content
         quarto_content += '\n' + subject_content
+    
+    quarto_content += '\n' + ":::"
 
     # write the final content to a .qmd file
     config_file_name = Path(config_file).stem
