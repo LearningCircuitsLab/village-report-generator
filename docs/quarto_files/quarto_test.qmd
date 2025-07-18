@@ -1,5 +1,5 @@
 ---
-title: "📊 [[[project_name]]] Report"
+title: "📊 visual_and_COT_data Report"
 date: today
 format:
   html:
@@ -21,8 +21,7 @@ jupyter: python3
 ::: {.panel-tabset}
 # Overview
 
-[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
-
+[Go back home](docs/index.html)
 :::
 ```{python}
 import pandas as pd
@@ -44,9 +43,9 @@ clear_output(wait=True)
 
 ```{python}
 # define and get the variables here
-max_date = pd.to_datetime("[[[date]]]") + pd.Timedelta(days=1)
-project = "[[[project_name]]]"
-subjects = [[[subjects]]]
+max_date = pd.to_datetime("2025-04-03") + pd.Timedelta(days=1)
+project = "visual_and_COT_data"
+subjects = ['ACV001', 'ACV002']
 ```
 ```{python}
 local_path = Path(utils.get_outpath()) / Path(project)

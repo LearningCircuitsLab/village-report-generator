@@ -1,5 +1,5 @@
 ---
-title: "📊 [[[project_name]]] Report"
+title: "📊 visual_and_COT_data Report"
 date: today
 format:
   html:
@@ -44,9 +44,9 @@ clear_output(wait=True)
 
 ```{python}
 # define and get the variables here
-max_date = pd.to_datetime("[[[date]]]") + pd.Timedelta(days=1)
-project = "[[[project_name]]]"
-subjects = [[[subjects]]]
+max_date = pd.to_datetime("2025-04-13") + pd.Timedelta(days=1)
+project = "visual_and_COT_data"
+subjects = ['ACV001', 'ACV002']
 ```
 ```{python}
 local_path = Path(utils.get_outpath()) / Path(project)
@@ -171,4 +171,59 @@ for ax in axs:
 for ax in axs[1:]:
     ax.legend_.remove()
 plt.show()
+```
+# ACV001
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Summary of the subject's full training history
+```{python}
+mouse = "ACV001"
+subject_df = df[df['subject'] == mouse]
+fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
+plt.close('all')
+fig1
+```
+
+Analysis of data from 2025-07-17
+```{python}
+date = "2025-07-17"
+subject_df = add_day_column_to_df(subject_df)
+subject_df = add_trial_of_day_column_to_df(subject_df)
+sdf = subject_df[subject_df["year_month_day"] == date]
+try:
+    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10)
+    plt.close('all')
+    display(fig)
+except (KeyError, ValueError) as e:
+    plt.close('all')
+    print(f"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}")
+```
+
+# ACV002
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Summary of the subject's full training history
+```{python}
+mouse = "ACV002"
+subject_df = df[df['subject'] == mouse]
+fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
+plt.close('all')
+fig1
+```
+
+Analysis of data from 2025-07-17
+```{python}
+date = "2025-07-17"
+subject_df = add_day_column_to_df(subject_df)
+subject_df = add_trial_of_day_column_to_df(subject_df)
+sdf = subject_df[subject_df["year_month_day"] == date]
+try:
+    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10)
+    plt.close('all')
+    display(fig)
+except (KeyError, ValueError) as e:
+    plt.close('all')
+    print(f"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}")
 ```
