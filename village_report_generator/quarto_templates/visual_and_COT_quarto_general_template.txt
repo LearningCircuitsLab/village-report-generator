@@ -36,7 +36,6 @@ import lecilab_behavior_analysis.plots as plots
 import seaborn as sns
 import plotly.express as px
 from lecilab_behavior_analysis.figure_maker import session_summary_figure
-from lecilab_behavior_analysis.df_transforms import add_trial_of_day_column_to_df, add_day_column_to_df
 from village.plots.corridor_plot import corridor_plot
 from IPython.display import clear_output
 clear_output(wait=True)
