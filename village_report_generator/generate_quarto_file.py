@@ -38,7 +38,7 @@ def generate_quarto_file(config_file: str, date: str) -> None:
     # for each subject, substitute the subject and date and append to the content
     for subject in config_dict['subjects']:
         subject_content = subject_template_content.replace('[[[subject]]]', subject)
-        # subject_content = subject_content.replace('[[[project_name]]]', config_dict['project_name'])
+        subject_content = subject_content.replace('[[[project_name]]]', config_dict['project_name'])
         subject_content = subject_content.replace('[[[date]]]', date)
 
         # append the subject content to the general content
