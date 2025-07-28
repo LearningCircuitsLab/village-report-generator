@@ -7,7 +7,8 @@ Summary of the subject's full training history
 #| label: subject_summary_for_[[[subject]]]
 mouse = "[[[subject]]]"
 subject_df = df[df['subject'] == mouse]
-fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False)
+events_df = utils.load_all_events("[[[project_name]]]")
+fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
 ```
@@ -18,7 +19,6 @@ Analysis of data from [[[date]]]
 date = "[[[date]]]"
 subject_df = dft.add_day_column_to_df(subject_df)
 subject_df = dft.add_trial_of_day_column_to_df(subject_df)
-events_df = utils.load_all_events("[[[project_name]]]")
 sdf = subject_df[subject_df["year_month_day"] == date]
 try:
     fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)
