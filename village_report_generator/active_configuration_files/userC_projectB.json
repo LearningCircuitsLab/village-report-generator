@@ -1,0 +1,10 @@
+{
+    "project_name": "project_two_test",
+    "subjects": [
+        "ACV002",
+        "ACV003"
+    ],
+    "general_template": "visual_and_COT_quarto_general_template.txt",
+    "subject_template": "visual_and_COT_quarto_subject_template.txt"
+
+}
