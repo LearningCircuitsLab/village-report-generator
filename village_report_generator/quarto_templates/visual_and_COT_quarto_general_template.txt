@@ -67,7 +67,7 @@ sessions_summary_df = sessions_summary_df[sessions_summary_df['date'] <= max_dat
 #| label: load_data_for_all_subjects
 df_list = []
 for mouse in subjects:
-    local_path = Path(utils.get_outpath()) / Path("visual_and_COT_data") / Path("sessions") / Path(mouse)
+    local_path = Path(utils.get_outpath()) / Path(project) / Path("sessions") / Path(mouse)
     df = pd.read_csv(local_path / Path(f'{mouse}.csv'), sep=";")
     df['date'] = pd.to_datetime(df['date'])
     df = df[df.date <= max_date]
