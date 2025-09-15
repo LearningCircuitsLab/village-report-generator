@@ -10,7 +10,9 @@
         "NUO007",
         "NUO008",
         "NUO009",
-        "NUO010"
+        "NUO010", 
+        "NUO011",
+        "NUO012"
     ],
     "general_template": "visual_and_COT_quarto_general_template.txt",
     "subject_template": "visual_and_COT_quarto_subject_template.txt"
