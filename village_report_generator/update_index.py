@@ -38,6 +38,9 @@ def generate_index_html_with_calendar():
             <p style="text-align: center; font-size: 16px;">
                 For more information, visit the <a href="https://github.com/LearningCircuitsLab/village-report-generator" style="color: #007bff; text-decoration: none;">Github repo</a>.
             </p>
+            <p style="text-align: center; font-size: 16px;">
+                Check out the <a href="https://learningcircuitslab.github.io/village-report-generator/temperature_and_humidity/temperature_and_humidity.html" style="color: #007bff; text-decoration: none;">Temperature and Humidity Reports</a>.
+            </p>
             </br>
     """
 

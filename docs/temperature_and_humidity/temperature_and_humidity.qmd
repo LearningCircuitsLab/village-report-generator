@@ -1,0 +1,55 @@
+---
+title: "🌡️ 2025-11-26 Temperature and Humidity Report"
+date: today
+format:
+  html:
+    theme: lux
+    toc: true
+    toc-depth: 2
+    page-layout: custom
+    css: styles.css
+    code-tools: false
+    smooth-scroll: true
+    anchor-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  fig-align: center
+jupyter: python3
+---
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+::: {.panel-tabset}
+# Cellex 4A
+
+```{python}
+#| label: import_libraries
+import pandas as pd
+from pathlib import Path
+import lecilab_behavior_analysis.utils as utils
+import lecilab_behavior_analysis.figure_maker as fm
+import datetime
+from IPython.display import clear_output
+clear_output(wait=True)
+```
+
+```{python}
+#| label: define_variables
+max_date = pd.to_datetime("2025-11-26") + pd.Timedelta(days=1)
+project = "COT_cannula_data"
+```
+
+```{python}
+#| label: load_temperature_and_humidity_data
+local_path = Path(utils.get_outpath()) / Path(project)
+temperatures_df = pd.read_csv(local_path / Path("temperatures.csv"), sep=";")
+temperatures_df.date = pd.to_datetime(temperatures_df.date)
+```
+
+```{python}
+#| label: plot
+fig = fm.make_temperature_humidity_figure(temperatures_df[temperatures_df["date"] >= (max_date - pd.Timedelta(days=7))])
+fig
+```
+:::

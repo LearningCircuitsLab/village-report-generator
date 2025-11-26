@@ -1,0 +1,23 @@
+---
+title: "🌡️ [[[date]]] Temperature and Humidity Report"
+date: today
+format:
+  html:
+    theme: lux
+    toc: true
+    toc-depth: 2
+    page-layout: custom
+    css: styles.css
+    code-tools: false
+    smooth-scroll: true
+    anchor-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  fig-align: center
+jupyter: python3
+---
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+::: {.panel-tabset}

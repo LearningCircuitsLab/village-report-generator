@@ -1,12 +1,14 @@
 # main script, to be run every day by the cron job
 # step 1: generate the quarto file
 # step 2: render the quarto file to HTML
-# step 3: update the index.html file with the calendar
-# step 4: commit the changes to the repository and push to GitHub
+# step 3: create a report about the temperature and humidity data
+# step 4: update the index.html file with the calendar
+# step 5: commit the changes to the repository and push to GitHub
 
 # import necessary libraries
 from village_report_generator.generate_quarto_file import generate_quarto_file
 from village_report_generator.update_index import generate_index_html_with_calendar
+from village_report_generator.temperature_and_humidity_scripts import generate_temphum_quarto_file
 import datetime
 import subprocess
 from pathlib import Path
@@ -46,7 +48,12 @@ def main():
 
         subprocess.run(['quarto', 'render', str(quarto_files_path)], check=True)
 
-    # Step 3: Update the index.html file
+    # Step 3: Create a report about the temperature and humidity data
+    temp_hum_quarto_path = generate_temphum_quarto_file(date)
+    subprocess.run(['quarto', 'render', str(temp_hum_quarto_path.with_suffix('.qmd'))], check=True)
+    print("Temperature and humidity report generated.")
+
+    # Step 4: Update the index.html file
     # make sure the quarto report is generated
     html_file_path = Path(f'docs/quarto_files/{config_file_name}_{date}.html')
     if not html_file_path.exists():
@@ -55,7 +62,7 @@ def main():
     generate_index_html_with_calendar()
     print("Index HTML file updated.")
 
-    # Step 4: Commit the changes to the repository and push to GitHub
+    # Step 5: Commit the changes to the repository and push to GitHub
     subprocess.run(['git', 'add', '.'], check=True)
     subprocess.run(['git', 'commit', '-m', f'Update report for {date}'], check=True)
     subprocess.run(['git', 'push'], check=True)

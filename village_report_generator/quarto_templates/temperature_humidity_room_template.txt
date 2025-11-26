@@ -1,0 +1,31 @@
+# [[[room_name]]]
+
+```{python}
+#| label: import_libraries
+import pandas as pd
+from pathlib import Path
+import lecilab_behavior_analysis.utils as utils
+import lecilab_behavior_analysis.figure_maker as fm
+import datetime
+from IPython.display import clear_output
+clear_output(wait=True)
+```
+
+```{python}
+#| label: define_variables
+max_date = pd.to_datetime("[[[date]]]") + pd.Timedelta(days=1)
+project = "[[[project_name]]]"
+```
+
+```{python}
+#| label: load_temperature_and_humidity_data
+local_path = Path(utils.get_outpath()) / Path(project)
+temperatures_df = pd.read_csv(local_path / Path("temperatures.csv"), sep=";")
+temperatures_df.date = pd.to_datetime(temperatures_df.date)
+```
+
+```{python}
+#| label: plot
+fig = fm.make_temperature_humidity_figure(temperatures_df[temperatures_df["date"] >= (max_date - pd.Timedelta(days=7))])
+fig
+```
