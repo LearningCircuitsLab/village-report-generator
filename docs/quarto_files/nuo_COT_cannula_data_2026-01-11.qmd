@@ -46,11 +46,12 @@ clear_output(wait=True)
 max_date = pd.to_datetime("2026-01-11") + pd.Timedelta(days=1)
 project = "COT_cannula_data"
 subjects = ['NUO001', 'NUO002', 'NUO003', 'NUO004', 'NUO005', 'NUO006', 'NUO007', 'NUO008', 'NUO009', 'NUO010', 'NUO011', 'NUO012']
+setup_name = "village02"
 ```
 ```{python}
 #| label: load_events_and_sessions_summary
-local_path = Path(utils.get_outpath()) / Path(project)
-events_df = utils.load_all_events(project)
+local_path = Path(utils.get_outpath()) / Path(project) / Path(setup_name)
+events_df = utils.load_all_events(project + "/" + setup_name)
 sessions_summary_df = pd.read_csv(local_path / Path("sessions_summary.csv"), sep=";")
 ```
 
@@ -190,7 +191,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO001
 mouse = "NUO001"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -221,7 +221,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO002
 mouse = "NUO002"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -252,7 +251,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO003
 mouse = "NUO003"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -283,7 +281,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO004
 mouse = "NUO004"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -314,7 +311,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO005
 mouse = "NUO005"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -345,7 +341,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO006
 mouse = "NUO006"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -376,7 +371,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO007
 mouse = "NUO007"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -407,7 +401,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO008
 mouse = "NUO008"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -438,7 +431,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO009
 mouse = "NUO009"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -469,7 +461,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO010
 mouse = "NUO010"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -500,7 +491,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO011
 mouse = "NUO011"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1
@@ -531,7 +521,6 @@ Summary of the subject's full training history
 #| label: subject_summary_for_NUO012
 mouse = "NUO012"
 subject_df = df[df['subject'] == mouse]
-events_df = utils.load_all_events("COT_cannula_data")
 fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
 plt.close('all')
 fig1

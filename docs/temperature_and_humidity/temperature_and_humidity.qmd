@@ -38,11 +38,12 @@ clear_output(wait=True)
 #| label: define_variables
 max_date = pd.to_datetime("2026-01-11") + pd.Timedelta(days=1)
 project = "COT_cannula_data"
+setup_name = "village02"
 ```
 
 ```{python}
 #| label: load_temperature_and_humidity_data
-local_path = Path(utils.get_outpath()) / Path(project)
+local_path = Path(utils.get_outpath()) / Path(project) / Path(setup_name)
 temperatures_df = pd.read_csv(local_path / Path("temperatures.csv"), sep=";")
 temperatures_df.date = pd.to_datetime(temperatures_df.date)
 ```
