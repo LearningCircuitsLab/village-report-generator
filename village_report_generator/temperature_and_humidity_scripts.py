@@ -46,13 +46,13 @@ def generate_temphum_quarto_file(date: str) -> Path:
     quarto_content = quarto_content.replace('[[[project_name]]]', project_name)
     # substitute the date in the general template
     quarto_content = quarto_content.replace('[[[date]]]', date)
-    # substitute the setup name in the general template
-    quarto_content = quarto_content.replace('[[[setup_name]]]', setup_name)
+    
     # for each room, substitute the room name and date and append to the content
     for room_name in room_names:
         room_content = room_template_content.replace('[[[room_name]]]', room_name)
         room_content = room_content.replace('[[[project_name]]]', project_name)
         room_content = room_content.replace('[[[date]]]', date)
+        room_content = room_content.replace('[[[setup_name]]]', setup_name)
 
         # append the room content to the general content
         quarto_content += '\n' + room_content
