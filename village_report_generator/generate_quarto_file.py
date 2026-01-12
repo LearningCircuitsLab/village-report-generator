@@ -34,6 +34,8 @@ def generate_quarto_file(config_file: str, date: str) -> None:
     quarto_content = quarto_content.replace('[[[subjects]]]', str(config_dict['subjects']))
     # substitute the date in the general template
     quarto_content = quarto_content.replace('[[[date]]]', date)
+    # substitute the setup name in the general template
+    quarto_content = quarto_content.replace('[[[setup_name]]]', config_dict['setup_name'])
 
     # for each subject, substitute the subject and date and append to the content
     for subject in config_dict['subjects']:

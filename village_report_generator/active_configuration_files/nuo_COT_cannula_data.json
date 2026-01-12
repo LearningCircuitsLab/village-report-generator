@@ -1,5 +1,6 @@
 {
     "project_name": "COT_cannula_data",
+    "setup_name": "village02",
     "subjects": [
         "NUO001",
         "NUO002",

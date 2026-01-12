@@ -46,11 +46,12 @@ clear_output(wait=True)
 max_date = pd.to_datetime("[[[date]]]") + pd.Timedelta(days=1)
 project = "[[[project_name]]]"
 subjects = [[[subjects]]]
+setup_name = "[[[setup_name]]]"
 ```
 ```{python}
 #| label: load_events_and_sessions_summary
-local_path = Path(utils.get_outpath()) / Path(project)
-events_df = utils.load_all_events(project)
+local_path = Path(utils.get_outpath()) / Path(project) / Path(setup_name)
+events_df = utils.load_all_events(project + "/" + setup_name)
 sessions_summary_df = pd.read_csv(local_path / Path("sessions_summary.csv"), sep=";")
 ```
 
