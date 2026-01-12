@@ -20,7 +20,7 @@ setup_name = "[[[setup_name]]]"
 
 ```{python}
 #| label: load_temperature_and_humidity_data
-local_path = Path(utils.get_outpath()) / Path(project) / Path("setup_name")
+local_path = Path(utils.get_outpath()) / Path(project) / Path(setup_name)
 temperatures_df = pd.read_csv(local_path / Path("temperatures.csv"), sep=";")
 temperatures_df.date = pd.to_datetime(temperatures_df.date)
 ```
