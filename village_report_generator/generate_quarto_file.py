@@ -1,7 +1,6 @@
 # this script generates a quarto file, that then is used by quarto to generate the report
 
 # import necessary libraries
-from lecilab_behavior_analysis import utils
 import fire
 import json
 from pathlib import Path
