@@ -14,22 +14,18 @@ import subprocess
 from pathlib import Path
 
 def main():
-    # Step 1: Generate the quarto file
+    # define the path to the active configuration files
     active_config_files_path = 'village_report_generator/active_configuration_files'
     # list all config files in the active configuration files directory
     config_files = [f for f in Path(active_config_files_path).glob('*.json')]
     if not config_files:
         print("No configuration files found in the active configuration files directory.")
         return
-    # if len(config_files) > 1:
-    #     print("Multiple configuration files found. Please ensure only one is present. To be changed!!")
-    #     return
-    # config_file = config_files[0]  # Assuming only one config file is present
+
     for config_file in config_files:
+        # Step 1: Generate the quarto file
         print(f"Using configuration file: {config_file}")
-        # # Get today's date in YYYY-MM-DD format
-        # todays_date = datetime.datetime.now().strftime('%Y-%m-%d')
-        # date will be the previous day
+        # Get previous day date in YYYY-MM-DD format
         date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
         print(f"Generating report for date: {date}")
         # Generate the quarto file

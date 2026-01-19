@@ -61,7 +61,6 @@ events_df['date'] = pd.to_datetime(events_df['date'])
 sessions_summary_df['date'] = pd.to_datetime(sessions_summary_df['date'])
 events_df = events_df[events_df['date'] <= max_date]
 sessions_summary_df = sessions_summary_df[sessions_summary_df['date'] <= max_date]
-
 ```
 
 ```{python}
