@@ -1,0 +1,990 @@
+{
+  "cells": [
+    {
+      "cell_type": "raw",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: 📊 COT_cannula_data 2026-01-28 Report\n",
+        "date: today\n",
+        "format:\n",
+        "  html:\n",
+        "    theme: lux\n",
+        "    toc: true\n",
+        "    toc-depth: 2\n",
+        "    page-layout: custom\n",
+        "    css: styles.css\n",
+        "    code-tools: false\n",
+        "    smooth-scroll: true\n",
+        "    anchor-sections: true\n",
+        "execute:\n",
+        "  echo: false\n",
+        "  warning: false\n",
+        "  message: false\n",
+        "  fig-align: center\n",
+        "---"
+      ],
+      "id": "331a95f2"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "::: {.panel-tabset}\n",
+        "# Overview\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)"
+      ],
+      "id": "9b69c20e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: import_libraries\n",
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "import lecilab_behavior_analysis.utils as utils\n",
+        "from pathlib import Path\n",
+        "import matplotlib.pyplot as plt\n",
+        "from lecilab_behavior_analysis.figure_maker import subject_progress_figure\n",
+        "import lecilab_behavior_analysis.df_transforms as dft\n",
+        "import lecilab_behavior_analysis.plots as plots\n",
+        "import seaborn as sns\n",
+        "import plotly.express as px\n",
+        "from lecilab_behavior_analysis.figure_maker import session_summary_figure\n",
+        "from village.plots.corridor_plot import corridor_plot\n",
+        "from IPython.display import clear_output\n",
+        "clear_output(wait=True)"
+      ],
+      "id": "import_libraries",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: define_variables\n",
+        "max_date = pd.to_datetime(\"2026-01-28\") + pd.Timedelta(days=1)\n",
+        "project = \"COT_cannula_data\"\n",
+        "subjects = ['NUO001', 'NUO002', 'NUO003', 'NUO004', 'NUO005', 'NUO006', 'NUO007', 'NUO008', 'NUO009', 'NUO010', 'NUO011', 'NUO012']\n",
+        "setup_name = \"village02\""
+      ],
+      "id": "define_variables",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: load_events_and_sessions_summary\n",
+        "local_path = Path(utils.get_outpath()) / Path(project) / Path(setup_name)\n",
+        "events_df = utils.load_all_events(project + \"/\" + setup_name)\n",
+        "sessions_summary_df = pd.read_csv(local_path / Path(\"sessions_summary.csv\"), sep=\";\")"
+      ],
+      "id": "load_events_and_sessions_summary",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: reduce_events_df_and_session_summary_to_max_date\n",
+        "events_df['date'] = pd.to_datetime(events_df['date'])\n",
+        "sessions_summary_df['date'] = pd.to_datetime(sessions_summary_df['date'])\n",
+        "events_df = events_df[events_df['date'] <= max_date]\n",
+        "sessions_summary_df = sessions_summary_df[sessions_summary_df['date'] <= max_date]"
+      ],
+      "id": "reduce_events_df_and_session_summary_to_max_date",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: load_data_for_all_subjects\n",
+        "df_list = []\n",
+        "for mouse in subjects:\n",
+        "    local_path = Path(utils.get_outpath()) / Path(project) / Path(\"sessions\") / Path(mouse)\n",
+        "    df = pd.read_csv(local_path / Path(f'{mouse}.csv'), sep=\";\")\n",
+        "    df['date'] = pd.to_datetime(df['date'])\n",
+        "    df = df[df.date <= max_date]\n",
+        "    df_list.append(dft.get_performance_through_trials(df, window=50))\n",
+        "df = pd.concat(df_list, ignore_index=True)\n",
+        "df = dft.analyze_df(df)"
+      ],
+      "id": "load_data_for_all_subjects",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Corridor plot of the last 4 days"
+      ],
+      "id": "cb254097"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: make_corridor_plot\n",
+        "cp = corridor_plot(\n",
+        "    df = events_df,\n",
+        "    subjects = subjects,\n",
+        "    width = 15,\n",
+        "    height = 3,\n",
+        "    ndays = 4,\n",
+        "    from_date = max_date + pd.Timedelta(days=0.5),\n",
+        ")"
+      ],
+      "id": "make_corridor_plot",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Performance over time for all mice"
+      ],
+      "id": "51560993"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: reactive_performance_plot_for_all_mice\n",
+        "fig = px.line(df, x='total_trial', y='performance_w', color='subject')\n",
+        "plt.close('all')\n",
+        "fig"
+      ],
+      "id": "reactive_performance_plot_for_all_mice",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: generate_TV_report\n",
+        "hours_back = 24  # hours to look back for the report\n",
+        "report_df, last_date = utils.generate_tv_report(events_df, sessions_summary_df, hours_back)\n",
+        "fig = plots.plot_table_from_df(report_df, title=\"TV Report - Last {} Hours from {}\".format(hours_back, last_date))\n",
+        "fig.show()"
+      ],
+      "id": "generate_TV_report",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: generate_training_stages_table\n",
+        "# Get the order of training stages based on first appearance\n",
+        "training_stages_order = df['current_training_stage'].dropna().unique().tolist()\n",
+        "# Create pivot table\n",
+        "tr_stage_df = df.groupby(['subject', 'current_training_stage']).size().unstack(fill_value=0).reset_index()\n",
+        "# Reorder columns\n",
+        "tr_stage_df = tr_stage_df.reindex(columns=['subject'] + training_stages_order)\n",
+        "fig = plots.plot_table_from_df(tr_stage_df, title=\"Trials by Training Stage\")\n",
+        "fig.show()"
+      ],
+      "id": "generate_training_stages_table",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: get_trials_and_performance_of_last_days\n",
+        "# get the number of trials and performance of each animal for the past days\n",
+        "ndays = 3\n",
+        "df_nt_per = df.groupby(['subject', 'year_month_day']).agg(\n",
+        "    trials=('trial', 'count'),\n",
+        "    performance=('correct', 'mean')\n",
+        ").reset_index()\n",
+        "# make the performance only with three decimal points\n",
+        "df_nt_per['performance'] = df_nt_per['performance'].apply(lambda x: f\"{x:.3f}\")\n",
+        "# pivot to have the year_month_day as columns\n",
+        "df_nt_per = df_nt_per.pivot(index='subject', columns='year_month_day', values=['trials', 'performance'])\n",
+        "# select the last X days from the multilevel columns\n",
+        "df_nt_per_last = df_nt_per.loc[:, df_nt_per.columns.get_level_values(1).isin(df_nt_per.columns.levels[1][-ndays:])]\n",
+        "df_nt_per_last.reset_index(inplace=True)\n",
+        "# Render table adapting the multilevel columns\n",
+        "df_nt_per_last.columns = df_nt_per_last.columns.map(lambda x: f\"{x[0]}_{x[1]}\" if x[1] else x[0])\n",
+        "fig = plots.plot_table_from_df(df_nt_per_last, title=\"Trials and Performance of last days\")\n",
+        "fig.show()"
+      ],
+      "id": "get_trials_and_performance_of_last_days",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Behavioral Box occupancy and training times heatmap"
+      ],
+      "id": "8e81da9b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: box_occupancy_and_training_times\n",
+        "occupancy_df = dft.get_start_and_end_of_sessions_df(df)\n",
+        "daily_percentages = dft.get_daily_occupancy_percentages(occupancy_df)\n",
+        "occupancy_heatmap = dft.get_occupancy_heatmap(occupancy_df, window_size=30)\n",
+        "fig, axs = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={'width_ratios': [3, 2]})\n",
+        "plots.plot_percentage_of_occupancy_per_day(daily_percentages, ax=axs[0])\n",
+        "fig.delaxes(axs[1])\n",
+        "axs[1] = fig.add_subplot(1, 2, 2, projection='polar')\n",
+        "plots.plot_training_times_clock_heatmap(occupancy_heatmap, ax=axs[1])\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ],
+      "id": "box_occupancy_and_training_times",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Overall number of trials and performance for the whole training cohort"
+      ],
+      "id": "75a79b6d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: overall_trials_and_performance\n",
+        "df_to_plot = df.groupby(['subject', 'year_month_day', 'current_training_stage']).size().reset_index(name='trials')\n",
+        "df_to_plot_correct = df.groupby(['subject', 'year_month_day', 'current_training_stage'])[['correct', 'miss_trial']].mean().reset_index()\n",
+        "df_to_plot = df_to_plot.merge(df_to_plot_correct, on=['subject', 'year_month_day', 'current_training_stage'])\n",
+        "df_to_plot = df_to_plot.sort_values(by=['year_month_day'])\n",
+        "df_to_plot['current_training_stage'] = df_to_plot['current_training_stage'].replace({\n",
+        "    'not saved': 'Habituation',\n",
+        "})\n",
+        "fig, axs = plt.subplots(1, 2, figsize=(10, 3))\n",
+        "axs = axs.ravel()\n",
+        "sns.lineplot(data=df_to_plot, x='year_month_day', y='trials', hue='current_training_stage', ax=axs[0])\n",
+        "axs[0].set_title('Number of trials per day')\n",
+        "sns.lineplot(data=df_to_plot, x='year_month_day', y='correct', hue='current_training_stage', ax=axs[1])\n",
+        "axs[1].set_title('Correct percentage per day')\n",
+        "for ax in axs:\n",
+        "    ax.set_xlabel('Date')\n",
+        "    ax.tick_params(axis='x', rotation=45)\n",
+        "    ax.set_xticks(ax.get_xticks())\n",
+        "    ax.set_xticklabels(ax.get_xticklabels(), ha='right')\n",
+        "    # reduce the number of x ticks to a maximum of 16\n",
+        "    ax.xaxis.set_major_locator(plt.MaxNLocator(16))\n",
+        "for ax in axs[1:]:\n",
+        "    ax.legend_.remove()\n",
+        "plt.show()"
+      ],
+      "id": "overall_trials_and_performance",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO001\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "98bb47cc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO001\n",
+        "mouse = \"NUO001\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO001",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "5cd399fc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO001\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO001",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO002\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "4a1729e6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO002\n",
+        "mouse = \"NUO002\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO002",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "7a7dd5c4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO002\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO002",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO003\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "e65c9673"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO003\n",
+        "mouse = \"NUO003\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO003",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "daa43e51"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO003\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO003",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO004\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "abc4f871"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO004\n",
+        "mouse = \"NUO004\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO004",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "1e388146"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO004\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO004",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO005\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "ecd883ff"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO005\n",
+        "mouse = \"NUO005\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO005",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "13b224d1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO005\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO005",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO006\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "baffeaa0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO006\n",
+        "mouse = \"NUO006\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO006",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "a6fbd92a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO006\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO006",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO007\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "c69b5fa4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO007\n",
+        "mouse = \"NUO007\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO007",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "f568dae4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO007\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO007",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO008\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "b2b886ab"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO008\n",
+        "mouse = \"NUO008\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO008",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "9de5bb58"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO008\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO008",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO009\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "f439c595"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO009\n",
+        "mouse = \"NUO009\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO009",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "3722a616"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO009\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO009",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO010\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "1b41c5fc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO010\n",
+        "mouse = \"NUO010\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO010",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "3abb16d1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO010\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO010",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO011\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "f4efb3ea"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO011\n",
+        "mouse = \"NUO011\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO011",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "2fd7631a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO011\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO011",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# NUO012\n",
+        "\n",
+        "[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)\n",
+        "\n",
+        "Summary of the subject's full training history"
+      ],
+      "id": "ed2fffd4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: subject_summary_for_NUO012\n",
+        "mouse = \"NUO012\"\n",
+        "subject_df = df[df['subject'] == mouse]\n",
+        "fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)\n",
+        "plt.close('all')\n",
+        "fig1"
+      ],
+      "id": "subject_summary_for_NUO012",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Analysis of data from 2026-01-28"
+      ],
+      "id": "a6510154"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: date_summary_for_NUO012\n",
+        "date = \"2026-01-28\"\n",
+        "subject_df = dft.add_day_column_to_df(subject_df)\n",
+        "subject_df = dft.add_trial_of_day_column_to_df(subject_df)\n",
+        "sdf = subject_df[subject_df[\"year_month_day\"] == date]\n",
+        "try:\n",
+        "    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)\n",
+        "    plt.close('all')\n",
+        "    display(fig)\n",
+        "except (KeyError, ValueError) as e:\n",
+        "    plt.close('all')\n",
+        "    print(f\"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}\")"
+      ],
+      "id": "date_summary_for_NUO012",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::"
+      ],
+      "id": "954d0a47"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/training_village/miniconda3/envs/report/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
