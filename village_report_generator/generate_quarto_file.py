@@ -16,16 +16,20 @@ def generate_quarto_file(config_file: str, date: str) -> None:
     # TODO: add checkups for the inputs
     # Load the configuration file
     config_dict = json.load(open(config_file, 'r'))
+    # check if there is a subject template in the config file
+    use_subject_template = True if 'subject_template' in config_dict else False
     # get the path to the template files
     general_template_path = Path(__file__).parent / 'quarto_templates' / config_dict['general_template']
-    subject_template_path = Path(__file__).parent / 'quarto_templates' / config_dict['subject_template']
+    if use_subject_template:
+        subject_template_path = Path(__file__).parent / 'quarto_templates' / config_dict['subject_template']
 
     # load the general template file, that are txt
     with open(general_template_path, 'r') as f:
         quarto_content = f.read()
     # load the subject template file, that are txt
-    with open(subject_template_path, 'r') as f:
-        subject_template_content = f.read()
+    if use_subject_template:
+        with open(subject_template_path, 'r') as f:
+            subject_template_content = f.read()
     
     # substitute the project name in the general template
     quarto_content = quarto_content.replace('[[[project_name]]]', config_dict['project_name'])
@@ -36,14 +40,15 @@ def generate_quarto_file(config_file: str, date: str) -> None:
     # substitute the setup name in the general template
     quarto_content = quarto_content.replace('[[[setup_name]]]', config_dict['setup_name'])
 
-    # for each subject, substitute the subject and date and append to the content
-    for subject in config_dict['subjects']:
-        subject_content = subject_template_content.replace('[[[subject]]]', subject)
-        subject_content = subject_content.replace('[[[project_name]]]', config_dict['project_name'])
-        subject_content = subject_content.replace('[[[date]]]', date)
+    if use_subject_template:
+        # for each subject, substitute the subject and date and append to the content
+        for subject in config_dict['subjects']:
+            subject_content = subject_template_content.replace('[[[subject]]]', subject)
+            subject_content = subject_content.replace('[[[project_name]]]', config_dict['project_name'])
+            subject_content = subject_content.replace('[[[date]]]', date)
 
-        # append the subject content to the general content
-        quarto_content += '\n' + subject_content
+            # append the subject content to the general content
+            quarto_content += '\n' + subject_content
     
     quarto_content += '\n' + ":::"
 
