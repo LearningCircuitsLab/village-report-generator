@@ -15,5 +15,6 @@
         "ACV021",
         "ACV022"
     ],
-    "general_template": "habituation_general_template.txt"
+    "general_template": "visual_and_COT_quarto_general_template.txt",
+    "subject_template": "visual_and_COT_quarto_subject_template.txt"
 }
