@@ -8,11 +8,8 @@
         "ACV014",
         "ACV015",
         "ACV016",
-        "ACV017",
         "ACV019",
-        "ACV020",
-        "ACV021",
-        "ACV022"
+        "ACV020"
     ],
     "general_template": "visual_and_COT_quarto_general_template.txt",
     "subject_template": "visual_and_COT_quarto_subject_template.txt"
