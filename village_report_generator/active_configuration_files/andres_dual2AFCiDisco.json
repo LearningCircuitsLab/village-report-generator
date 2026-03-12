@@ -4,12 +4,9 @@
     "subjects": [
         "ACV011",
         "ACV012",
-        "ACV013",
         "ACV014",
         "ACV015",
-        "ACV016",
-        "ACV019",
-        "ACV020"
+        "ACV019"
     ],
     "general_template": "visual_and_COT_quarto_general_template.txt",
     "subject_template": "visual_and_COT_quarto_subject_template.txt"
