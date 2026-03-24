@@ -1,0 +1,17 @@
+{
+    "project_name": "COT_cannula_GAD2_data",
+    "setup_name": "village01",
+    "subjects": [
+        "NUO057",
+        "NUO058",
+        "NUO059",
+        "NUO060",
+        "NUO061",
+        "NUO062",
+        "NUO063",
+        "NUO064", 
+        "NUO065"
+    ],
+    "general_template": "visual_and_COT_quarto_general_template.txt",
+    "subject_template": "visual_and_COT_quarto_subject_template.txt"
+}
