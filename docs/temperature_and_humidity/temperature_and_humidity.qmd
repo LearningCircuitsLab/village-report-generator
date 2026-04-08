@@ -1,5 +1,5 @@
 ---
-title: "🌡️ 2026-04-06 Temperature and Humidity Report"
+title: "🌡️ 2026-04-07 Temperature and Humidity Report"
 date: today
 format:
   html:
@@ -36,7 +36,7 @@ clear_output(wait=True)
 
 ```{python}
 #| label: define_variables
-max_date = pd.to_datetime("2026-04-06") + pd.Timedelta(days=1)
+max_date = pd.to_datetime("2026-04-07") + pd.Timedelta(days=1)
 project = "COT_cannula_data"
 setup_name = "village02"
 ```
