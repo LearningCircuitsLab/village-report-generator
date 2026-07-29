@@ -37,8 +37,8 @@ clear_output(wait=True)
 ```{python}
 #| label: define_variables
 max_date = pd.to_datetime("2026-07-28") + pd.Timedelta(days=1)
-project = "COT_cannula_data"
-setup_name = "village02"
+project = "COT_cannula_GAD2_data"
+setup_name = "village01"
 ```
 
 ```{python}
