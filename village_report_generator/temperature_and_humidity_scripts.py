@@ -12,7 +12,7 @@ def decide_which_setup_to_use():
         str: The setup name to use.
     """
     # Placeholder implementation
-    return "village02"
+    return "village01"
 
 def decide_which_project_to_use():
     """
@@ -23,7 +23,7 @@ def decide_which_project_to_use():
         str: The project name to use.
     """
     # Placeholder implementation
-    return "COT_cannula_data"
+    return "COT_cannula_GAD2_data"
 
 
 def generate_temphum_quarto_file(date: str) -> Path:
