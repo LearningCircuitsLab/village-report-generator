@@ -73,17 +73,23 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.html">village_report_generator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.cli.html">cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.make_archive_report.html">make_archive_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.make_report.html">make_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.render.html">render</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.shrink_images.html">shrink_images</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.html">generate_quarto_file</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.build_quarto_content.html">build_quarto_content</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.config_setups.html">config_setups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.generate_quarto_file.html">generate_quarto_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.read_config.html">read_config</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.update_index.html">update_index</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.active_project_html.html">active_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.archived_project_html.html">archived_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.calendar_html.html">calendar_html</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.generate_index_html_with_calendar.html">generate_index_html_with_calendar</a></li>
 </ul>
 </li>
@@ -142,7 +148,9 @@ data-aria-dark="Switch to auto color mode">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h1>
 <p>Each active project has a <code class="docutils literal notranslate"><span class="pre">.json</span></code> file in
 <code class="docutils literal notranslate"><span class="pre">village_report_generator/active_configuration_files/</span></code>. To stop making the
-reports of a project, move its file out of that folder.</p>
+reports of a project, move its file to <code class="docutils literal notranslate"><span class="pre">archived_configuration_files/</span></code>: the
+project goes to the archive of the index, with one report of its last data
+(see <a class="reference internal" href="how_it_works.html"><span class="doc std std-doc">How it works</span></a>).</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="p">{</span>
 </span><span data-line="2"><span class="w">    </span><span class="nt">"project_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"COT_cannula_GAD2_data"</span><span class="p">,</span>
 </span><span data-line="3"><span class="w">    </span><span class="nt">"subjects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"NUO057"</span><span class="p">,</span><span class="w"> </span><span class="s2">"NUO058"</span><span class="p">,</span><span class="w"> </span><span class="s2">"NUO059"</span><span class="p">],</span>

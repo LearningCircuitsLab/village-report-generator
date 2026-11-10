@@ -1,0 +1,6 @@
+archived\_project\_html
+=======================
+
+.. currentmodule:: village_report_generator.update_index
+
+.. autofunction:: archived_project_html

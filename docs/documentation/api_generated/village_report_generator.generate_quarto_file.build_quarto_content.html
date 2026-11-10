@@ -73,17 +73,23 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="village_report_generator.village_report_generator.html">village_report_generator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.cli.html">cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.make_archive_report.html">make_archive_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.make_report.html">make_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.render.html">render</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.shrink_images.html">shrink_images</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current"><a class="reference internal" href="village_report_generator.generate_quarto_file.html">generate_quarto_file</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">build_quarto_content</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.generate_quarto_file.config_setups.html">config_setups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.generate_quarto_file.generate_quarto_file.html">generate_quarto_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.generate_quarto_file.read_config.html">read_config</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="village_report_generator.update_index.html">update_index</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.active_project_html.html">active_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.archived_project_html.html">archived_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.calendar_html.html">calendar_html</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.generate_index_html_with_calendar.html">generate_index_html_with_calendar</a></li>
 </ul>
 </li>
@@ -150,10 +156,15 @@ data-aria-dark="Switch to auto color mode">
 <h1>build_quarto_content<a class="headerlink" href="#build-quarto-content" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="village_report_generator.generate_quarto_file.build_quarto_content">
-<span class="sig-name descname"><span class="pre">build_quarto_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/village_report_generator/generate_quarto_file.html#build_quarto_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#village_report_generator.generate_quarto_file.build_quarto_content" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">build_quarto_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_dates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/village_report_generator/generate_quarto_file.html#build_quarto_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#village_report_generator.generate_quarto_file.build_quarto_content" title="Link to this definition">#</a></dt>
 <dd><p>Text of the .qmd report of a project for a date (YYYY-MM-DD), from the
 templates named in its configuration: the general template (the overview)
 and, if there is one, the subject template, repeated for each subject.</p>
+<p>With subject_dates ({subject: YYYY-MM-DD}), it is the report of an
+archived project: the overview is as of date (the last day with data of
+the project) and the tab of each subject shows its training history up to
+its own last day with data, and its last ARCHIVE_SESSION_HOURS hours of
+training.</p>
 </dd></dl>
 
 </section>

@@ -18,8 +18,10 @@
    
       cli
       main
+      make_archive_report
       make_report
       render
+      shrink_images
    
 
    

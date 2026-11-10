@@ -2,7 +2,9 @@
 
 Each active project has a `.json` file in
 `village_report_generator/active_configuration_files/`. To stop making the
-reports of a project, move its file out of that folder.
+reports of a project, move its file to `archived_configuration_files/`: the
+project goes to the archive of the index, with one report of its last data
+(see [How it works](how_it_works)).
 
 ```json
 {

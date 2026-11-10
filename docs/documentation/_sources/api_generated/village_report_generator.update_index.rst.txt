@@ -16,6 +16,9 @@
       :recursive:
       :nosignatures:
    
+      active_project_html
+      archived_project_html
+      calendar_html
       generate_index_html_with_calendar
    
 

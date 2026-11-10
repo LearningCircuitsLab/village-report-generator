@@ -1,0 +1,6 @@
+read\_config
+============
+
+.. currentmodule:: village_report_generator.generate_quarto_file
+
+.. autofunction:: read_config

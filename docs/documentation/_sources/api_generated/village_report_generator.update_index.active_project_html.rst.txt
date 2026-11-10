@@ -1,0 +1,6 @@
+active\_project\_html
+=====================
+
+.. currentmodule:: village_report_generator.update_index
+
+.. autofunction:: active_project_html

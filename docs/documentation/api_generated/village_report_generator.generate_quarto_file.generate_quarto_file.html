@@ -2,7 +2,7 @@
 <html lang="en" data-accent-color="violet" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>generate_quarto_file - village-report-generator</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="update_index" href="village_report_generator.update_index.html" /><link rel="prev" title="config_setups" href="village_report_generator.generate_quarto_file.config_setups.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>generate_quarto_file - village-report-generator</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="read_config" href="village_report_generator.generate_quarto_file.read_config.html" /><link rel="prev" title="config_setups" href="village_report_generator.generate_quarto_file.config_setups.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"light");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
@@ -73,17 +73,23 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="village_report_generator.village_report_generator.html">village_report_generator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.cli.html">cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.make_archive_report.html">make_archive_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.make_report.html">make_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.render.html">render</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.village_report_generator.shrink_images.html">shrink_images</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current"><a class="reference internal" href="village_report_generator.generate_quarto_file.html">generate_quarto_file</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.generate_quarto_file.build_quarto_content.html">build_quarto_content</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.generate_quarto_file.config_setups.html">config_setups</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">generate_quarto_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.generate_quarto_file.read_config.html">read_config</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="village_report_generator.update_index.html">update_index</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.active_project_html.html">active_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.archived_project_html.html">archived_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.calendar_html.html">calendar_html</a></li>
 <li class="toctree-l3"><a class="reference internal" href="village_report_generator.update_index.generate_index_html_with_calendar.html">generate_index_html_with_calendar</a></li>
 </ul>
 </li>
@@ -150,16 +156,19 @@ data-aria-dark="Switch to auto color mode">
 <h1>generate_quarto_file<a class="headerlink" href="#generate-quarto-file" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="village_report_generator.generate_quarto_file.generate_quarto_file">
-<span class="sig-name descname"><span class="pre">generate_quarto_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../_modules/village_report_generator/generate_quarto_file.html#generate_quarto_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#village_report_generator.generate_quarto_file.generate_quarto_file" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">generate_quarto_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_dates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../_modules/village_report_generator/generate_quarto_file.html#generate_quarto_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#village_report_generator.generate_quarto_file.generate_quarto_file" title="Link to this definition">#</a></dt>
 <dd><p>Writes the .qmd report of the project of config_file for a date
 (YYYY-MM-DD) to &lt;docs_path&gt;/quarto_files/&lt;config name&gt;_&lt;date&gt;.qmd and
 returns its path.</p>
+<p>With subject_dates, it is the report of an archived project (see
+build_quarto_content), written to &lt;config name&gt;_archive.qmd.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>config_file</strong> – path to the configuration file (.json).</p></li>
 <li><p><strong>date</strong> – date in the format ‘YYYY-MM-DD’.</p></li>
 <li><p><strong>docs_path</strong> – folder of the website (defaults to the docs folder of this repository).</p></li>
+<li><p><strong>subject_dates</strong> – last day with data of each subject (archived projects).</p></li>
 </ul>
 </dd>
 </dl>
@@ -179,10 +188,10 @@ returns its path.</p>
         <span>Previous</span><div class="title">config_setups</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="village_report_generator.update_index.html">
+    <a href="village_report_generator.generate_quarto_file.read_config.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">update_index</div>
+        <div class="title">read_config</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>

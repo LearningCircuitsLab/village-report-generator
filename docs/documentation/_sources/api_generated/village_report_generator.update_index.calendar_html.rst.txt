@@ -1,0 +1,6 @@
+calendar\_html
+==============
+
+.. currentmodule:: village_report_generator.update_index
+
+.. autofunction:: calendar_html

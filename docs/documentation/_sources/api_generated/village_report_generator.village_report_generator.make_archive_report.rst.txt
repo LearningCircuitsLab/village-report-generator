@@ -1,0 +1,6 @@
+make\_archive\_report
+=====================
+
+.. currentmodule:: village_report_generator.village_report_generator
+
+.. autofunction:: make_archive_report

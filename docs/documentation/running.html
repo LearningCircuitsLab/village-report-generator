@@ -73,17 +73,23 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.html">village_report_generator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.cli.html">cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.make_archive_report.html">make_archive_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.make_report.html">make_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.render.html">render</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.shrink_images.html">shrink_images</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.html">generate_quarto_file</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.build_quarto_content.html">build_quarto_content</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.config_setups.html">config_setups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.generate_quarto_file.html">generate_quarto_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.read_config.html">read_config</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.update_index.html">update_index</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.active_project_html.html">active_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.archived_project_html.html">archived_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.calendar_html.html">calendar_html</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.generate_index_html_with_calendar.html">generate_index_html_with_calendar</a></li>
 </ul>
 </li>
@@ -191,8 +197,14 @@ writing access to the repository.</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--data_path</span></code></p></td>
 <td><p>Folder with the data (default: the folder of this computer).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--temperature</span> <span class="pre">False</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--archived_config_path</span></code></p></td>
+<td><p>Folder with the configuration files of the archived projects.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--temperature</span> <span class="pre">False</span></code></p></td>
 <td><p>Skip the temperature and humidity report.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--archive</span> <span class="pre">False</span></code></p></td>
+<td><p>Do not archive the projects that are not active.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--push</span> <span class="pre">False</span></code></p></td>
 <td><p>Do not commit and push.</p></td>
@@ -207,14 +219,17 @@ writing access to the repository.</p>
 <section id="trying-changes-with-the-sample-data">
 <h2>Trying changes with the sample data<a class="headerlink" href="#trying-changes-with-the-sample-data" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">sample_data/</span></code> has four days of two mice of a real project (trained in two
-boxes), with its events, sessions and temperatures (2.5 MB). It renders in
-about half a minute:</p>
+boxes), with its events, sessions and temperatures, and the last days of two
+mice of a finished project, which goes to the archive (5 MB). It renders in
+about a minute:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">python<span class="w"> </span>-m<span class="w"> </span>village_report_generator.village_report_generator<span class="w"> </span>--sample
 </span></pre></div>
 </div>
 <p>The reports go to <code class="docutils literal notranslate"><span class="pre">sample_reports/</span></code> (not tracked by git); open
 <code class="docutils literal notranslate"><span class="pre">sample_reports/index.html</span></code>. It makes a report with subject tabs, an
-overview-only report (habituation template) and the temperature report.</p>
+overview-only report (habituation template), the archive report and the
+temperature report. <code class="docutils literal notranslate"><span class="pre">--date</span></code> changes the day of the daily reports (the data
+ends on 2026-05-25; a later day shows a day without new data, in light red).</p>
 </section>
 <section id="tests">
 <h2>Tests<a class="headerlink" href="#tests" title="Link to this heading">#</a></h2>

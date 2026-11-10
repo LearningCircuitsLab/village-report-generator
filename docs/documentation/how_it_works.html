@@ -73,17 +73,23 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.html">village_report_generator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.cli.html">cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.main.html">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.make_archive_report.html">make_archive_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.make_report.html">make_report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.render.html">render</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.village_report_generator.shrink_images.html">shrink_images</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.html">generate_quarto_file</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.build_quarto_content.html">build_quarto_content</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.config_setups.html">config_setups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.generate_quarto_file.html">generate_quarto_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.generate_quarto_file.read_config.html">read_config</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api_generated/village_report_generator.update_index.html">update_index</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.active_project_html.html">active_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.archived_project_html.html">archived_project_html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.calendar_html.html">calendar_html</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api_generated/village_report_generator.update_index.generate_index_html_with_calendar.html">generate_index_html_with_calendar</a></li>
 </ul>
 </li>
@@ -109,6 +115,9 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#nothing-stops-the-other-reports">Nothing stops the other reports</a></li>
 <li><a class="reference internal" href="#where-the-data-comes-from">Where the data comes from</a></li>
+<li><a class="reference internal" href="#the-calendars-of-the-index">The calendars of the index</a></li>
+<li><a class="reference internal" href="#the-archive">The archive</a></li>
+<li><a class="reference internal" href="#size-of-the-reports">Size of the reports</a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -155,6 +164,8 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li><p>Quarto runs the code of the <code class="docutils literal notranslate"><span class="pre">.qmd</span></code> file (Python) and writes the <code class="docutils literal notranslate"><span class="pre">.html</span></code> report.</p></li>
 <li><p>The temperature and humidity report is made the same way.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">projects.py</span></code> records the days with new data of each project and archives
+the projects that are no longer active (see below).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">update_index.py</span></code> rewrites <code class="docutils literal notranslate"><span class="pre">docs/index.html</span></code>, with a calendar per project.</p></li>
 <li><p>The new files are committed and pushed; GitHub Pages publishes the <code class="docutils literal notranslate"><span class="pre">docs/</span></code>
 folder.</p></li>
@@ -186,6 +197,53 @@ lecilab-behavior-analysis, or the <code class="docutils literal notranslate"><sp
 the project with an <code class="docutils literal notranslate"><span class="pre">events.csv</span></code> or a <code class="docutils literal notranslate"><span class="pre">sessions_summary.csv</span></code> (e.g.
 <code class="docutils literal notranslate"><span class="pre">village01</span></code> and <code class="docutils literal notranslate"><span class="pre">village02</span></code> when the mice train in two boxes). Their events
 and sessions are read together.</p>
+</section>
+<section id="the-calendars-of-the-index">
+<h2>The calendars of the index<a class="headerlink" href="#the-calendars-of-the-index" title="Link to this heading">#</a></h2>
+<p>Every day of a calendar with a report is a link to it.</p>
+<ul class="simple">
+<li><p><strong>Active projects</strong> (a configuration in <code class="docutils literal notranslate"><span class="pre">active_configuration_files/</span></code>):
+light green if new data was collected that day, light red if there is a
+report but no new data (nothing was sent from the boxes).</p></li>
+<li><p><strong>Archive</strong>: the days with data, in grey. Every day links to the one report
+of the archived project.</p></li>
+</ul>
+<p>New data: the boxes send each session to the data folder, so a project has
+new data on a day if one of its subjects has a session that day in the
+sessions summary of one of its setups (or, without a sessions summary, in
+its trials file). The days are kept in <code class="docutils literal notranslate"><span class="pre">docs/calendar_days.json</span></code>.</p>
+</section>
+<section id="the-archive">
+<h2>The archive<a class="headerlink" href="#the-archive" title="Link to this heading">#</a></h2>
+<p>A project whose configuration is no longer in <code class="docutils literal notranslate"><span class="pre">active_configuration_files/</span></code>
+goes to the archive. With its configuration in
+<code class="docutils literal notranslate"><span class="pre">village_report_generator/archived_configuration_files/</span></code>, the next daily run:</p>
+<ol class="arabic simple">
+<li><p>makes one report, <code class="docutils literal notranslate"><span class="pre">&lt;project&gt;_archive.html</span></code>: the Overview as of the last day
+with data of the project and, in the tab of each subject, its training
+history up to its own last day with data and its <strong>last 48 hours of
+training</strong>;</p></li>
+<li><p>removes the daily reports of the project from the website (the <code class="docutils literal notranslate"><span class="pre">.qmd</span></code>
+files, a few kB each, are kept as the record of the days that had a
+report).</p></li>
+</ol>
+<p>The archive report is made again if newer data appears (e.g. a box that sent
+its data late). A project without configuration in
+<code class="docutils literal notranslate"><span class="pre">archived_configuration_files/</span></code>, or without data, keeps its daily reports,
+and its calendar links to the last one.</p>
+</section>
+<section id="size-of-the-reports">
+<h2>Size of the reports<a class="headerlink" href="#size-of-the-reports" title="Link to this heading">#</a></h2>
+<p>GitHub Pages publishes at most 10 GB, so the reports are kept small:</p>
+<ul class="simple">
+<li><p>figures are drawn at normal resolution (<code class="docutils literal notranslate"><span class="pre">fig-format:</span> <span class="pre">png</span></code>, <code class="docutils literal notranslate"><span class="pre">fig-dpi:</span> <span class="pre">96</span></code>
+in the templates; Quarto’s default, retina, doubles it) and saved with 256
+colours after rendering (<code class="docutils literal notranslate"><span class="pre">shrink_images</span></code>), about 7 times smaller in total;</p></li>
+<li><p>the interactive performance plot of the Overview has at most 1000 points
+per subject (consecutive trials are grouped), so it does not grow with
+training;</p></li>
+<li><p>archived projects keep one report instead of one per day.</p></li>
+</ul>
 </section>
 </section>
 

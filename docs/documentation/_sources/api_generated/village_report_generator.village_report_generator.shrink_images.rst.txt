@@ -1,0 +1,6 @@
+shrink\_images
+==============
+
+.. currentmodule:: village_report_generator.village_report_generator
+
+.. autofunction:: shrink_images
