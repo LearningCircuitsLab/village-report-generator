@@ -11,8 +11,10 @@
    - `problems_template.txt`: the Problems tab.
 2. Quarto runs the code of the `.qmd` file (Python) and writes the `.html` report.
 3. The temperature and humidity report is made the same way.
-4. `update_index.py` rewrites `docs/index.html`, with a calendar per project.
-5. The new files are committed and pushed; GitHub Pages publishes the `docs/`
+4. `projects.py` records the days with new data of each project and archives
+   the projects that are no longer active (see below).
+5. `update_index.py` rewrites `docs/index.html`, with a calendar per project.
+6. The new files are committed and pushed; GitHub Pages publishes the `docs/`
    folder.
 
 ## Nothing stops the other reports
@@ -42,3 +44,49 @@ The **setups** (boxes) of a project are found automatically: every folder of
 the project with an `events.csv` or a `sessions_summary.csv` (e.g.
 `village01` and `village02` when the mice train in two boxes). Their events
 and sessions are read together.
+
+## The calendars of the index
+
+Every day of a calendar with a report is a link to it.
+
+- **Active projects** (a configuration in `active_configuration_files/`):
+  light green if new data was collected that day, light red if there is a
+  report but no new data (nothing was sent from the boxes).
+- **Archive**: the days with data, in grey. Every day links to the one report
+  of the archived project.
+
+New data: the boxes send each session to the data folder, so a project has
+new data on a day if one of its subjects has a session that day in the
+sessions summary of one of its setups (or, without a sessions summary, in
+its trials file). The days are kept in `docs/calendar_days.json`.
+
+## The archive
+
+A project whose configuration is no longer in `active_configuration_files/`
+goes to the archive. With its configuration in
+`village_report_generator/archived_configuration_files/`, the next daily run:
+
+1. makes one report, `<project>_archive.html`: the Overview as of the last day
+   with data of the project and, in the tab of each subject, its training
+   history up to its own last day with data and its **last 48 hours of
+   training**;
+2. removes the daily reports of the project from the website (the `.qmd`
+   files, a few kB each, are kept as the record of the days that had a
+   report).
+
+The archive report is made again if newer data appears (e.g. a box that sent
+its data late). A project without configuration in
+`archived_configuration_files/`, or without data, keeps its daily reports,
+and its calendar links to the last one.
+
+## Size of the reports
+
+GitHub Pages publishes at most 10 GB, so the reports are kept small:
+
+- figures are drawn at normal resolution (`fig-format: png`, `fig-dpi: 96`
+  in the templates; Quarto's default, retina, doubles it) and saved with 256
+  colours after rendering (`shrink_images`), about 7 times smaller in total;
+- the interactive performance plot of the Overview has at most 1000 points
+  per subject (consecutive trials are grouped), so it does not grow with
+  training;
+- archived projects keep one report instead of one per day.

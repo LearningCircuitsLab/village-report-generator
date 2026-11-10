@@ -91,7 +91,9 @@ def test_a_failing_project_does_not_stop_the_others(two_projects, tmp_path, monk
         rendered.append(qmd_path.name)
 
     monkeypatch.setattr(vrg, "render", fake_render)
-    monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path: None)
+    monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path, active=None: None)
+    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state: None)
+    monkeypatch.setattr(vrg, "archive_projects", lambda *args: [])
     failed = vrg.main(date="2026-05-25", config_path=two_projects, docs_path=tmp_path / "docs",
                       temperature=False, push=False)
     assert failed == ["broken_project"]
@@ -106,7 +108,9 @@ def test_select_projects(two_projects, tmp_path, monkeypatch):
         rendered.append(qmd_path.name)
 
     monkeypatch.setattr(vrg, "render", fake_render)
-    monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path: None)
+    monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path, active=None: None)
+    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state: None)
+    monkeypatch.setattr(vrg, "archive_projects", lambda *args: [])
     vrg.main(date="2026-05-25", projects="good_project", config_path=two_projects,
              docs_path=tmp_path / "docs", temperature=False, push=False)
     assert rendered == ["good_project_2026-05-25.qmd"]
@@ -135,7 +139,9 @@ def test_sample_option(monkeypatch, tmp_path):
         rendered.append(qmd_path)
 
     monkeypatch.setattr(vrg, "render", fake_render)
-    monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path: None)
+    monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path, active=None: None)
+    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state: None)
+    monkeypatch.setattr(vrg, "archive_projects", lambda *args: [])
     monkeypatch.setattr(vrg, "generate_temphum_quarto_file", lambda date, docs_path: tmp_path / "t.qmd")
     monkeypatch.setattr(vrg, "SAMPLE_REPORTS_PATH", tmp_path / "sample_reports")
     monkeypatch.delenv("LECILAB_DATA_PATH", raising=False)
@@ -144,3 +150,39 @@ def test_sample_option(monkeypatch, tmp_path):
         "sample_COT_cannula_GAD2_2026-05-25.qmd", "sample_habituation_2026-05-25.qmd"]
     assert vrg.os.environ["LECILAB_DATA_PATH"] == str(vrg.SAMPLE_DATA_PATH.resolve())
     monkeypatch.delenv("LECILAB_DATA_PATH")
+
+
+def test_archive_report_content(config, tmp_path):
+    path = tmp_path / "proj.json"
+    path.write_text(json.dumps(config))
+    qmd = generate_quarto_file(path, "2026-06-11", tmp_path, subject_dates={"A001": "2026-06-11", "A002": "2026-06-05"})
+    assert qmd.name == "proj_archive.qmd"
+    text = qmd.read_text()
+    assert "2026-06-11 Archive" in text and "Archived project: data up to 2026-06-11" in text
+    assert 'subject_date = "2026-06-05"' in text and "session_hours = 48" in text
+    daily = build_quarto_content(config, "2026-06-11")
+    assert "session_hours = None" in daily and 'archive_note = ""' in daily and "2026-06-11 Report" in daily
+
+
+def test_shrink_images(tmp_path):
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from PIL import Image
+
+    figures = tmp_path / "report_files" / "figure-html"
+    figures.mkdir(parents=True)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    x = np.linspace(0, 10, 2000)
+    ax.plot(x, np.sin(x) + np.random.default_rng(0).normal(0, 0.2, x.size))
+    ax.fill_between(x, -1, 1, alpha=0.2)
+    fig.savefig(figures / "plot.png", dpi=96)
+    before = (figures / "plot.png").stat().st_size
+    (tmp_path / "report.html").write_text("<html></html>")
+    assert vrg.shrink_images(tmp_path / "report.html") > 0
+    assert (figures / "plot.png").stat().st_size < before
+    with Image.open(figures / "plot.png") as image:
+        assert image.mode == "P" and image.size == (576, 384)
+    assert vrg.shrink_images(tmp_path / "missing.html") == 0

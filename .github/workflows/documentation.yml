@@ -66,8 +66,6 @@ jobs:
           pip install -e . pytest
           pip install "git+https://github.com/LearningCircuitsLab/lecilab-behavior-analysis@${LECILAB_REF}"
           pip install git+https://github.com/BrainCircuitsBehaviorLab/village PyQt5
-          # used for the index; its numpy<2 pin is not needed
-          pip install --no-deps plotly-calplot
           pip install jupyter ipykernel nbformat nbclient pyyaml
           pip install -r docs_source/requirements.txt
 

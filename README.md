@@ -38,6 +38,12 @@ and a cell or figure panel that fails shows a red message and is listed in
 the Problems tab. The script ends with exit code 1, naming the reports that
 failed, so that cron reports it.
 
+The index has a calendar per project: light green for days with new data,
+light red for days with a report but no new data. Projects that are no longer
+active (configuration moved to `archived_configuration_files/`) go to an
+**archive** section: one report with their last data (each subject's last 48
+hours of training), and their daily reports are removed from the website.
+
 A configuration file:
 
 ```json
@@ -63,9 +69,9 @@ installed in the Python of the `python3` Jupyter kernel):
 python -m village_report_generator.village_report_generator
 ```
 
-To try changes, render the reports of the sample data (`sample_data/`: four
-days of two mice of a real project, 2.5 MB) in about half a minute; they go
-to `sample_reports/` (not tracked):
+To try changes, render the reports of the sample data (`sample_data/`: a few
+days of real data of an active and an archived project, 5 MB) in about a
+minute; they go to `sample_reports/` (not tracked):
 
 ```bash
 python -m village_report_generator.village_report_generator --sample

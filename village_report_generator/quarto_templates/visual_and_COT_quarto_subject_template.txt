@@ -2,13 +2,23 @@
 
 [Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
 
-Summary of the subject's full training history
+```{python}
+#| label: subject_dates_for_[[[subject]]]
+mouse = "[[[subject]]]"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "[[[subject_date]]]"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = [[[session_hours]]]
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+display(Markdown(f"Summary of the training history of {mouse} up to {subject_date}"))
+```
+
 ```{python}
 #| label: subject_summary_for_[[[subject]]]
-mouse = "[[[subject]]]"
-subject_df = df[df["subject"] == mouse] if not df.empty else df
 if subject_df.empty:
-    display(Markdown(f"No trials for {mouse} up to {report_date}."))
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
 else:
     fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
         subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
@@ -17,16 +27,23 @@ else:
     show(fig)
 ```
 
-Analysis of data from [[[date]]]
 ```{python}
 #| label: date_summary_for_[[[subject]]]
-sdf = subject_df[subject_df["year_month_day"] == report_date] if not subject_df.empty else subject_df
-if sdf.empty:
-    display(Markdown(f"{mouse} did not train on {report_date}."))
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
 else:
-    fig = overview.never_raises(f"{mouse} session of {report_date}", "matplotlib")(session_summary_figure)(
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"the last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    display(Markdown(f"Analysis of {period}"))
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
         sdf, perf_window=50, width=15, height=10
     )
-    problems[f"{mouse} session of {report_date}"] = getattr(fig, "panel_problems", [])
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
     show(fig)
 ```

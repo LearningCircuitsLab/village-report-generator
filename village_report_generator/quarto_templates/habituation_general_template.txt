@@ -1,5 +1,5 @@
 ---
-title: "📊 [[[project_name]]] [[[date]]] Report"
+title: "📊 [[[project_name]]] [[[date]]] [[[report_kind]]]"
 date: today
 format:
   html:
@@ -10,6 +10,9 @@ format:
     code-tools: false
     smooth-scroll: true
     anchor-sections: true
+    # figures at normal resolution (the default, retina, doubles it: 4x the size)
+    fig-format: png
+    fig-dpi: 96
 execute:
   echo: false
   warning: false
@@ -77,6 +80,10 @@ if missing_subjects:
 if events_df is None or sessions_summary_df is None:
     notes.append(f"No events or sessions summary found in the setups of {project} ({', '.join(setups) or 'none'})")
 display(Markdown(f"Setups: {', '.join(s or project for s in setups) or 'none found'}."))
+# archive: what this report shows (empty for daily reports)
+archive_note = "[[[archive_note]]]"
+if archive_note:
+    display(Markdown(f"**{archive_note}**"))
 if notes:
     display(Markdown("**Note:** " + ". ".join(notes) + "."))
 ```
