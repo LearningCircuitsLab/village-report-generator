@@ -323,6 +323,7 @@
   "status": "archived"
  },
  "hernando_dual2AFCiDisco": {
+  "active_setups": [],
   "data_days": [
    "2026-11-10"
   ],
@@ -1177,6 +1178,9 @@
   "status": "archived"
  },
  "nuo_frequency_vs_locationPureTone": {
+  "active_setups": [
+   "village02"
+  ],
   "data_days": [
    "2026-08-02",
    "2026-08-03",
