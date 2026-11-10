@@ -128,3 +128,20 @@ def test_daily_reports_kept_without_configuration(docs, tmp_path):
     projects.save_state(docs, state)
     generate_index_html_with_calendar(docs, [])
     assert 'href="quarto_files/unknown_2026-01-01.html"' in (docs / "index.html").read_text()
+
+
+def test_title_shows_the_setups_that_collected_data_on_the_day(docs, monkeypatch):
+    add_daily_report(docs, "proj", "2026-05-25")
+    dates = pd.DataFrame({
+        "subject": ["A", "B", "A"],
+        "date": pd.to_datetime(["2026-05-21 10:00", "2026-05-25 09:00", "2026-05-25 15:00"]),
+        "setup": ["village02", "village01", "village03"],
+    })
+    monkeypatch.setattr(projects, "session_dates", lambda config: dates)
+    state = {}
+    projects.update_active_projects({"proj": CONFIG}, docs, state, "2026-05-25")
+    # village02 collected data 4 days before, not on the day
+    assert state["proj"]["active_setups"] == ["village01", "village03"]
+    projects.save_state(docs, state)
+    generate_index_html_with_calendar(docs, ["proj"])
+    assert 'proj <span class="setups">(village01, village03)</span>' in (docs / "index.html").read_text()

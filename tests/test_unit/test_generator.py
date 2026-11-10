@@ -92,7 +92,7 @@ def test_a_failing_project_does_not_stop_the_others(two_projects, tmp_path, monk
 
     monkeypatch.setattr(vrg, "render", fake_render)
     monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path, active=None: None)
-    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state: None)
+    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state, date=None: None)
     monkeypatch.setattr(vrg, "archive_projects", lambda *args: [])
     failed = vrg.main(date="2026-05-25", config_path=two_projects, docs_path=tmp_path / "docs",
                       temperature=False, push=False)
@@ -109,7 +109,7 @@ def test_select_projects(two_projects, tmp_path, monkeypatch):
 
     monkeypatch.setattr(vrg, "render", fake_render)
     monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path, active=None: None)
-    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state: None)
+    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state, date=None: None)
     monkeypatch.setattr(vrg, "archive_projects", lambda *args: [])
     vrg.main(date="2026-05-25", projects="good_project", config_path=two_projects,
              docs_path=tmp_path / "docs", temperature=False, push=False)
@@ -140,7 +140,7 @@ def test_sample_option(monkeypatch, tmp_path):
 
     monkeypatch.setattr(vrg, "render", fake_render)
     monkeypatch.setattr(vrg, "generate_index_html_with_calendar", lambda docs_path, active=None: None)
-    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state: None)
+    monkeypatch.setattr(vrg, "update_active_projects", lambda configs, docs_path, state, date=None: None)
     monkeypatch.setattr(vrg, "archive_projects", lambda *args: [])
     monkeypatch.setattr(vrg, "generate_temphum_quarto_file", lambda date, docs_path: tmp_path / "t.qmd")
     monkeypatch.setattr(vrg, "SAMPLE_REPORTS_PATH", tmp_path / "sample_reports")

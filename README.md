@@ -11,7 +11,8 @@ with a calendar to choose the day.
 - **Overview** tab: corridor plot of the last days, TV report (detections,
   sessions, water and weight), trials per training stage, trials and
   performance of the last days, box occupancy, performance of the cohort.
-- One tab per **subject**: training history and the session of the day.
+- One tab per **subject**: the sessions of the day (with links to the same
+  subject on the previous and next days) and the training history.
 - **Problems** tab: everything that could not be drawn.
 - A separate **temperature and humidity** report.
 
@@ -39,7 +40,8 @@ the Problems tab. The script ends with exit code 1, naming the reports that
 failed, so that cron reports it.
 
 The index has a calendar per project: light green for days with new data,
-light red for days with a report but no new data. Projects that are no longer
+light red for days with a report but no new data; the title shows the setups
+that collected data on the last day. Projects that are no longer
 active (configuration moved to `archived_configuration_files/`) go to an
 **archive** section: one report with their last data (each subject's last 48
 hours of training), and their daily reports are removed from the website.

@@ -175,7 +175,7 @@ def main(
 
     # days with reports and with new data of each project, and the archive
     state = load_state(docs_path)
-    update_active_projects(active_configs, docs_path, state)
+    update_active_projects(active_configs, docs_path, state, date)
     if archive:
         failed += [f"{name} (archive)" for name in archive_projects(
             set(active_configs), docs_path, state,

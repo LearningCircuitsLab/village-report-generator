@@ -12,19 +12,6 @@ session_hours = [[[session_hours]]]
 subject_df = df[df["subject"] == mouse] if not df.empty else df
 if not subject_df.empty:
     subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
-display(Markdown(f"Summary of the training history of {mouse} up to {subject_date}"))
-```
-
-```{python}
-#| label: subject_summary_for_[[[subject]]]
-if subject_df.empty:
-    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
-else:
-    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
-        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
-    )
-    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
-    show(fig)
 ```
 
 ```{python}
@@ -36,14 +23,27 @@ elif session_hours is None:
 else:
     # sessions that started in the last session_hours hours of training
     sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
-    period = f"the last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "[[[report_name]]]", subject_date, mouse)
 if sdf.empty:
     display(Markdown(f"{mouse} did not train on {subject_date}."))
 else:
-    display(Markdown(f"Analysis of {period}"))
     fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
         sdf, perf_window=50, width=15, height=10
     )
     problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_[[[subject]]]
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
     show(fig)
 ```

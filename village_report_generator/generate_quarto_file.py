@@ -29,7 +29,9 @@ def config_setups(config: dict) -> Optional[List[str]]:
 ARCHIVE_SESSION_HOURS = 48
 
 
-def build_quarto_content(config: dict, date: str, subject_dates: Optional[Dict[str, str]] = None) -> str:
+def build_quarto_content(
+    config: dict, date: str, subject_dates: Optional[Dict[str, str]] = None, report_name: str = ""
+) -> str:
     """
     Text of the .qmd report of a project for a date (YYYY-MM-DD), from the
     templates named in its configuration: the general template (the overview)
@@ -40,6 +42,9 @@ def build_quarto_content(config: dict, date: str, subject_dates: Optional[Dict[s
     the project) and the tab of each subject shows its training history up to
     its own last day with data, and its last ARCHIVE_SESSION_HOURS hours of
     training.
+
+    report_name (the name of the configuration file) is used for the links
+    to the reports of the previous and next days in the tab of each subject.
     """
     archive = subject_dates is not None
     if archive:
@@ -65,6 +70,7 @@ def build_quarto_content(config: dict, date: str, subject_dates: Optional[Dict[s
                 .replace("[[[date]]]", date)
                 .replace("[[[subject_date]]]", subject_date)
                 .replace("[[[session_hours]]]", str(ARCHIVE_SESSION_HOURS) if archive else "None")
+                .replace("[[[report_name]]]", "" if archive else report_name)
             )
             content += "\n" + subject_content
 
@@ -107,7 +113,7 @@ def generate_quarto_file(
     suffix = "archive" if subject_dates is not None else date
     output_file = docs_path / "quarto_files" / f"{Path(config_file).stem}_{suffix}.qmd"
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    output_file.write_text(build_quarto_content(config, date, subject_dates))
+    output_file.write_text(build_quarto_content(config, date, subject_dates, Path(config_file).stem))
     return output_file
 
 

@@ -34,6 +34,7 @@ STYLE = """
   .legend span.box { display: inline-block; width: 12px; height: 12px; margin: 0 4px 0 12px; vertical-align: middle; }
   section.project { margin: 24px auto; max-width: 1100px; }
   section.project h3 { margin-bottom: 0; color: #2a3f5f; }
+  section.project h3 .setups { font-weight: normal; color: #6c757d; }
   .year { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; margin-top: 8px; }
   .year-label { font-weight: bold; width: 100%; }
   .month { font-size: 11px; }
@@ -77,12 +78,14 @@ def calendar_html(colors: Dict[str, str], links: Dict[str, str], titles: Dict[st
 
 
 def _project_html(name: str, colors: Dict[str, str], links: Dict[str, str], titles: Dict[str, str],
-                  subtitle: str) -> str:
-    return (f'<section class="project"><h3 id="{html.escape(name)}">{html.escape(name)}</h3>'
+                  subtitle: str, setups: Optional[List[str]] = None) -> str:
+    title = html.escape(name) + (f' <span class="setups">({html.escape(", ".join(setups))})</span>' if setups else "")
+    return (f'<section class="project"><h3 id="{html.escape(name)}">{title}</h3>'
             f"<div>{subtitle}</div>{calendar_html(colors, links, titles)}</section>")
 
 
-def active_project_html(name: str, days: List[str], data_days: set) -> str:
+def active_project_html(name: str, days: List[str], data_days: set, setups: Optional[List[str]] = None) -> str:
+    """Calendar of an active project; setups: those that collected data on the last report day."""
     colors, links, titles = {}, {}, {}
     for day in days:
         has_data = day in data_days
@@ -90,7 +93,7 @@ def active_project_html(name: str, days: List[str], data_days: set) -> str:
         links[day] = f"quarto_files/{name}_{day}.html"
         titles[day] = f"{day}: {'new data' if has_data else 'no new data'}"
     last = f'Last report: <a href="{links[days[-1]]}">{days[-1]}</a>' if days else "No reports yet."
-    return _project_html(name, colors, links, titles, last)
+    return _project_html(name, colors, links, titles, last, setups)
 
 
 def archived_project_html(name: str, entry: dict, html_days: List[str]) -> str:
@@ -129,7 +132,9 @@ def generate_index_html_with_calendar(docs_path=DOCS_PATH, active_names: Optiona
     )
     body = [f'<h2 class="section">Active projects</h2>{legend}']
     for name in active:
-        body.append(active_project_html(name, html_days.get(name, []), set(state.get(name, {}).get("data_days", []))))
+        entry = state.get(name, {})
+        body.append(active_project_html(name, html_days.get(name, []), set(entry.get("data_days", [])),
+                                        entry.get("active_setups")))
     if archived:
         body.append('<h2 class="section">Archive</h2>'
                     '<p class="intro">Projects that are no longer updated. Every day links to the report of their last data.</p>')

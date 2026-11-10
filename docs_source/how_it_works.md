@@ -51,7 +51,9 @@ Every day of a calendar with a report is a link to it.
 
 - **Active projects** (a configuration in `active_configuration_files/`):
   light green if new data was collected that day, light red if there is a
-  report but no new data (nothing was sent from the boxes).
+  report but no new data (nothing was sent from the boxes). The title shows,
+  in parentheses, the setups that collected data for the project on the day
+  of the last report (a setup used earlier but not that day is not shown).
 - **Archive**: the days with data, in grey. Every day links to the one report
   of the archived project.
 
@@ -90,3 +92,15 @@ GitHub Pages publishes at most 10 GB, so the reports are kept small:
   per subject (consecutive trials are grouped), so it does not grow with
   training;
 - archived projects keep one report instead of one per day.
+
+## The tab of each subject
+
+1. **Sessions** of the day of the report (or, in the archive, the last 48
+   hours of training), with links to the same subject in the reports of the
+   previous and the next day.
+2. **Training history** up to that day.
+
+A link to a report ending in `#<subject>` (e.g.
+`nuo_COT_cannula_GAD2_data_2026-11-09.html#NUO057`) opens the tab of that
+subject, and the address of a report shows the tab that is open, so it can be
+copied and shared.

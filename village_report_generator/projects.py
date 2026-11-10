@@ -74,7 +74,7 @@ def update_data_days(state: dict, name: str, config: dict) -> Optional[dict]:
     entry = state.setdefault(name, {})
     entry["data_days"] = sorted(days | set(entry.get("data_days", [])))
     last = dates.groupby("subject")["date"].max().dt.strftime("%Y-%m-%d").to_dict() if len(dates) else {}
-    return {"last_day": max(last.values()) if last else None, "subject_last_days": last}
+    return {"last_day": max(last.values()) if last else None, "subject_last_days": last, "dates": dates}
 
 
 def find_archived_config(name: str, config_paths: List[Path]) -> Optional[Path]:
@@ -146,19 +146,28 @@ def archive_projects(
             if not report.exists():
                 failed.append(name)
                 continue
-            entry["archive"] = {"report": f"quarto_files/{report.name}", **last}
+            entry["archive"] = {"report": f"quarto_files/{report.name}",
+                                "last_day": last["last_day"], "subject_last_days": last["subject_last_days"]}
         removed = remove_daily_reports(docs_path, name)
         if removed:
             print(f"Archived project {name}: removed {len(removed)} daily reports (the .qmd files are kept).")
     return failed
 
 
-def update_active_projects(configs: Dict[str, dict], docs_path: Path, state: dict) -> None:
-    """Days with a report and days with new data of the active projects."""
+def update_active_projects(configs: Dict[str, dict], docs_path: Path, state: dict, date: Optional[str] = None) -> None:
+    """
+    Days with a report and days with new data of the active projects, and
+    the setups that collected data for them on date (the day of the
+    reports): active_setups.
+    """
     days = report_days(docs_path, extensions=("html",))
     for name, config in configs.items():
         entry = state.setdefault(name, {})
         entry["status"] = "active"
         entry.pop("archive", None)
         entry["report_days"] = sorted(days.get(name, set()))
-        update_data_days(state, name, config)
+        read = update_data_days(state, name, config)
+        if read is not None and date is not None:
+            dates = read["dates"]
+            on_date = dates[dates["date"].dt.strftime("%Y-%m-%d") == date]
+            entry["active_setups"] = sorted({s for s in on_date["setup"].dropna() if s})
