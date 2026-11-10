@@ -4,9 +4,12 @@ import pandas as pd
 import plotly_calplot
 from collections import defaultdict
 
-def generate_index_html_with_calendar():
-    quarto_files_path = "docs/quarto_files"
-    index_file_path = "docs/index.html"
+DOCS_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs")
+
+
+def generate_index_html_with_calendar(docs_path=DOCS_PATH):
+    quarto_files_path = os.path.join(docs_path, "quarto_files")
+    index_file_path = os.path.join(docs_path, "index.html")
 
     # Get all .html files in the quarto_files directory
     html_files = [f for f in os.listdir(quarto_files_path) if f.endswith(".html")]

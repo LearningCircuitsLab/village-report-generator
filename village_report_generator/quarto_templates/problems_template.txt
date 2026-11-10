@@ -1,0 +1,9 @@
+# Problems
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Panels and cells of this report that could not be generated (they show a red message where they should be).
+```{python}
+#| label: problems_of_this_report
+show(overview.problems_table({"Overview": overview.failed_cells(), **problems}))
+```

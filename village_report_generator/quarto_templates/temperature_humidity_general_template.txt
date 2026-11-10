@@ -7,7 +7,6 @@ format:
     toc: true
     toc-depth: 2
     page-layout: custom
-    css: styles.css
     code-tools: false
     smooth-scroll: true
     anchor-sections: true
@@ -15,6 +14,7 @@ execute:
   echo: false
   warning: false
   message: false
+  error: true
   fig-align: center
 jupyter: python3
 ---
