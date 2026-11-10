@@ -1,0 +1,6 @@
+generate\_temphum\_quarto\_file
+===============================
+
+.. currentmodule:: village_report_generator.temperature_and_humidity_scripts
+
+.. autofunction:: generate_temphum_quarto_file

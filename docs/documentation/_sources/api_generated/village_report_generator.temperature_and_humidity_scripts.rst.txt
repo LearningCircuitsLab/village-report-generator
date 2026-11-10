@@ -1,0 +1,33 @@
+﻿temperature\_and\_humidity\_scripts
+===================================
+
+.. automodule:: village_report_generator.temperature_and_humidity_scripts
+
+   
+   
+   
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :template: custom_base_template.rst
+      :recursive:
+      :nosignatures:
+   
+      decide_which_project_to_use
+      decide_which_setup_to_use
+      generate_temphum_quarto_file
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

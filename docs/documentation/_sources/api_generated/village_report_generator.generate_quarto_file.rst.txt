@@ -1,0 +1,33 @@
+﻿generate\_quarto\_file
+======================
+
+.. automodule:: village_report_generator.generate_quarto_file
+
+   
+   
+   
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :template: custom_base_template.rst
+      :recursive:
+      :nosignatures:
+   
+      build_quarto_content
+      config_setups
+      generate_quarto_file
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

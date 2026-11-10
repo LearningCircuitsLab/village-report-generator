@@ -1,0 +1,6 @@
+generate\_quarto\_file
+======================
+
+.. currentmodule:: village_report_generator.generate_quarto_file
+
+.. autofunction:: generate_quarto_file

@@ -1,0 +1,6 @@
+config\_setups
+==============
+
+.. currentmodule:: village_report_generator.generate_quarto_file
+
+.. autofunction:: config_setups

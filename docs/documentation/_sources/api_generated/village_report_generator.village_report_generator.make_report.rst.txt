@@ -1,0 +1,6 @@
+make\_report
+============
+
+.. currentmodule:: village_report_generator.village_report_generator
+
+.. autofunction:: make_report

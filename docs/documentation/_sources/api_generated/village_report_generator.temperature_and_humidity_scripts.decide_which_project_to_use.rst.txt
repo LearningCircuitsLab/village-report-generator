@@ -1,0 +1,6 @@
+decide\_which\_project\_to\_use
+===============================
+
+.. currentmodule:: village_report_generator.temperature_and_humidity_scripts
+
+.. autofunction:: decide_which_project_to_use

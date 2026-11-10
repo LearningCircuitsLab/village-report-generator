@@ -1,0 +1,31 @@
+﻿update\_index
+=============
+
+.. automodule:: village_report_generator.update_index
+
+   
+   
+   
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :template: custom_base_template.rst
+      :recursive:
+      :nosignatures:
+   
+      generate_index_html_with_calendar
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

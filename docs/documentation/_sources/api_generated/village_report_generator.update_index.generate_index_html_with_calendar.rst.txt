@@ -1,0 +1,6 @@
+generate\_index\_html\_with\_calendar
+=====================================
+
+.. currentmodule:: village_report_generator.update_index
+
+.. autofunction:: generate_index_html_with_calendar

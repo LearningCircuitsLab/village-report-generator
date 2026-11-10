@@ -1,0 +1,34 @@
+﻿village\_report\_generator
+==========================
+
+.. automodule:: village_report_generator.village_report_generator
+
+   
+   
+   
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :template: custom_base_template.rst
+      :recursive:
+      :nosignatures:
+   
+      cli
+      main
+      make_report
+      render
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

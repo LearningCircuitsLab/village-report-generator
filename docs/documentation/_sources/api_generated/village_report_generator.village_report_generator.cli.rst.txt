@@ -1,0 +1,6 @@
+cli
+===
+
+.. currentmodule:: village_report_generator.village_report_generator
+
+.. autofunction:: cli
