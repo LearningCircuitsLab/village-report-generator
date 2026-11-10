@@ -182,99 +182,105 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="31">
 <div class="viewcode-block" id="build_quarto_content">
 <a class="viewcode-back" href="../../api_generated/village_report_generator.generate_quarto_file.build_quarto_content.html#village_report_generator.generate_quarto_file.build_quarto_content">[docs]</a>
-</span><span data-line="32"><span class="k">def</span><span class="w"> </span><span class="nf">build_quarto_content</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subject_dates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="33"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="34"><span class="sd">    Text of the .qmd report of a project for a date (YYYY-MM-DD), from the</span>
-</span><span data-line="35"><span class="sd">    templates named in its configuration: the general template (the overview)</span>
-</span><span data-line="36"><span class="sd">    and, if there is one, the subject template, repeated for each subject.</span>
-</span><span data-line="37">
-</span><span data-line="38"><span class="sd">    With subject_dates ({subject: YYYY-MM-DD}), it is the report of an</span>
-</span><span data-line="39"><span class="sd">    archived project: the overview is as of date (the last day with data of</span>
-</span><span data-line="40"><span class="sd">    the project) and the tab of each subject shows its training history up to</span>
-</span><span data-line="41"><span class="sd">    its own last day with data, and its last ARCHIVE_SESSION_HOURS hours of</span>
-</span><span data-line="42"><span class="sd">    training.</span>
-</span><span data-line="43"><span class="sd">    """</span>
-</span><span data-line="44">    <span class="n">archive</span> <span class="o">=</span> <span class="n">subject_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="45">    <span class="k">if</span> <span class="n">archive</span><span class="p">:</span>
-</span><span data-line="46">        <span class="n">note</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"Archived project: data up to </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">. The tab of each subject shows its last day "</span>
-</span><span data-line="47">                <span class="sa">f</span><span class="s2">"with data and its last </span><span class="si">{</span><span class="n">ARCHIVE_SESSION_HOURS</span><span class="si">}</span><span class="s2"> hours of training."</span><span class="p">)</span>
-</span><span data-line="48">    <span class="n">general</span> <span class="o">=</span> <span class="p">(</span><span class="n">TEMPLATES_PATH</span> <span class="o">/</span> <span class="n">config</span><span class="p">[</span><span class="s2">"general_template"</span><span class="p">])</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
-</span><span data-line="49">    <span class="n">content</span> <span class="o">=</span> <span class="p">(</span>
-</span><span data-line="50">        <span class="n">general</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[project_name]]]"</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">"project_name"</span><span class="p">])</span>
-</span><span data-line="51">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[subjects]]]"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"subjects"</span><span class="p">]))</span>
-</span><span data-line="52">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[date]]]"</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
-</span><span data-line="53">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[setups]]]"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config_setups</span><span class="p">(</span><span class="n">config</span><span class="p">)))</span>
-</span><span data-line="54">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[report_kind]]]"</span><span class="p">,</span> <span class="s2">"Archive"</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="s2">"Report"</span><span class="p">)</span>
-</span><span data-line="55">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[archive_note]]]"</span><span class="p">,</span> <span class="n">note</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
-</span><span data-line="56">    <span class="p">)</span>
-</span><span data-line="57">
-</span><span data-line="58">    <span class="k">if</span> <span class="s2">"subject_template"</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-</span><span data-line="59">        <span class="n">subject_template</span> <span class="o">=</span> <span class="p">(</span><span class="n">TEMPLATES_PATH</span> <span class="o">/</span> <span class="n">config</span><span class="p">[</span><span class="s2">"subject_template"</span><span class="p">])</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
-</span><span data-line="60">        <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">"subjects"</span><span class="p">]:</span>
-</span><span data-line="61">            <span class="n">subject_date</span> <span class="o">=</span> <span class="n">subject_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="n">date</span>
-</span><span data-line="62">            <span class="n">subject_content</span> <span class="o">=</span> <span class="p">(</span>
-</span><span data-line="63">                <span class="n">subject_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[subject]]]"</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
-</span><span data-line="64">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[project_name]]]"</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">"project_name"</span><span class="p">])</span>
-</span><span data-line="65">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[date]]]"</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
-</span><span data-line="66">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[subject_date]]]"</span><span class="p">,</span> <span class="n">subject_date</span><span class="p">)</span>
-</span><span data-line="67">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[session_hours]]]"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ARCHIVE_SESSION_HOURS</span><span class="p">)</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="s2">"None"</span><span class="p">)</span>
-</span><span data-line="68">            <span class="p">)</span>
-</span><span data-line="69">            <span class="n">content</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">subject_content</span>
-</span><span data-line="70">
-</span><span data-line="71">    <span class="n">content</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="p">(</span><span class="n">TEMPLATES_PATH</span> <span class="o">/</span> <span class="n">PROBLEMS_TEMPLATE</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
-</span><span data-line="72">    <span class="n">content</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">":::"</span>
-</span><span data-line="73">    <span class="k">return</span> <span class="n">content</span></div>
+</span><span data-line="32"><span class="k">def</span><span class="w"> </span><span class="nf">build_quarto_content</span><span class="p">(</span>
+</span><span data-line="33">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subject_dates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">report_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+</span><span data-line="34"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="35"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="36"><span class="sd">    Text of the .qmd report of a project for a date (YYYY-MM-DD), from the</span>
+</span><span data-line="37"><span class="sd">    templates named in its configuration: the general template (the overview)</span>
+</span><span data-line="38"><span class="sd">    and, if there is one, the subject template, repeated for each subject.</span>
+</span><span data-line="39">
+</span><span data-line="40"><span class="sd">    With subject_dates ({subject: YYYY-MM-DD}), it is the report of an</span>
+</span><span data-line="41"><span class="sd">    archived project: the overview is as of date (the last day with data of</span>
+</span><span data-line="42"><span class="sd">    the project) and the tab of each subject shows its training history up to</span>
+</span><span data-line="43"><span class="sd">    its own last day with data, and its last ARCHIVE_SESSION_HOURS hours of</span>
+</span><span data-line="44"><span class="sd">    training.</span>
+</span><span data-line="45">
+</span><span data-line="46"><span class="sd">    report_name (the name of the configuration file) is used for the links</span>
+</span><span data-line="47"><span class="sd">    to the reports of the previous and next days in the tab of each subject.</span>
+</span><span data-line="48"><span class="sd">    """</span>
+</span><span data-line="49">    <span class="n">archive</span> <span class="o">=</span> <span class="n">subject_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="50">    <span class="k">if</span> <span class="n">archive</span><span class="p">:</span>
+</span><span data-line="51">        <span class="n">note</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"Archived project: data up to </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">. The tab of each subject shows its last day "</span>
+</span><span data-line="52">                <span class="sa">f</span><span class="s2">"with data and its last </span><span class="si">{</span><span class="n">ARCHIVE_SESSION_HOURS</span><span class="si">}</span><span class="s2"> hours of training."</span><span class="p">)</span>
+</span><span data-line="53">    <span class="n">general</span> <span class="o">=</span> <span class="p">(</span><span class="n">TEMPLATES_PATH</span> <span class="o">/</span> <span class="n">config</span><span class="p">[</span><span class="s2">"general_template"</span><span class="p">])</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+</span><span data-line="54">    <span class="n">content</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="55">        <span class="n">general</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[project_name]]]"</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">"project_name"</span><span class="p">])</span>
+</span><span data-line="56">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[subjects]]]"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"subjects"</span><span class="p">]))</span>
+</span><span data-line="57">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[date]]]"</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+</span><span data-line="58">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[setups]]]"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config_setups</span><span class="p">(</span><span class="n">config</span><span class="p">)))</span>
+</span><span data-line="59">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[report_kind]]]"</span><span class="p">,</span> <span class="s2">"Archive"</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="s2">"Report"</span><span class="p">)</span>
+</span><span data-line="60">        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[archive_note]]]"</span><span class="p">,</span> <span class="n">note</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+</span><span data-line="61">    <span class="p">)</span>
+</span><span data-line="62">
+</span><span data-line="63">    <span class="k">if</span> <span class="s2">"subject_template"</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+</span><span data-line="64">        <span class="n">subject_template</span> <span class="o">=</span> <span class="p">(</span><span class="n">TEMPLATES_PATH</span> <span class="o">/</span> <span class="n">config</span><span class="p">[</span><span class="s2">"subject_template"</span><span class="p">])</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+</span><span data-line="65">        <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">"subjects"</span><span class="p">]:</span>
+</span><span data-line="66">            <span class="n">subject_date</span> <span class="o">=</span> <span class="n">subject_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="n">date</span>
+</span><span data-line="67">            <span class="n">subject_content</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="68">                <span class="n">subject_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[subject]]]"</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
+</span><span data-line="69">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[project_name]]]"</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">"project_name"</span><span class="p">])</span>
+</span><span data-line="70">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[date]]]"</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+</span><span data-line="71">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[subject_date]]]"</span><span class="p">,</span> <span class="n">subject_date</span><span class="p">)</span>
+</span><span data-line="72">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[session_hours]]]"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ARCHIVE_SESSION_HOURS</span><span class="p">)</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="s2">"None"</span><span class="p">)</span>
+</span><span data-line="73">                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[[[report_name]]]"</span><span class="p">,</span> <span class="s2">""</span> <span class="k">if</span> <span class="n">archive</span> <span class="k">else</span> <span class="n">report_name</span><span class="p">)</span>
+</span><span data-line="74">            <span class="p">)</span>
+</span><span data-line="75">            <span class="n">content</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">subject_content</span>
+</span><span data-line="76">
+</span><span data-line="77">    <span class="n">content</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="p">(</span><span class="n">TEMPLATES_PATH</span> <span class="o">/</span> <span class="n">PROBLEMS_TEMPLATE</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+</span><span data-line="78">    <span class="n">content</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">":::"</span>
+</span><span data-line="79">    <span class="k">return</span> <span class="n">content</span></div>
 
-</span><span data-line="74">
-</span><span data-line="75">
+</span><span data-line="80">
+</span><span data-line="81">
 <div class="viewcode-block" id="read_config">
 <a class="viewcode-back" href="../../api_generated/village_report_generator.generate_quarto_file.read_config.html#village_report_generator.generate_quarto_file.read_config">[docs]</a>
-</span><span data-line="76"><span class="k">def</span><span class="w"> </span><span class="nf">read_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span data-line="77"><span class="w">    </span><span class="sd">"""Configuration of a project (.json), checking the required fields."""</span>
-</span><span data-line="78">    <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-</span><span data-line="79">    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"project_name"</span><span class="p">,</span> <span class="s2">"subjects"</span><span class="p">,</span> <span class="s2">"general_template"</span><span class="p">):</span>
-</span><span data-line="80">        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-</span><span data-line="81">            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2"> has no '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-</span><span data-line="82">    <span class="k">return</span> <span class="n">config</span></div>
+</span><span data-line="82"><span class="k">def</span><span class="w"> </span><span class="nf">read_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span data-line="83"><span class="w">    </span><span class="sd">"""Configuration of a project (.json), checking the required fields."""</span>
+</span><span data-line="84">    <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+</span><span data-line="85">    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"project_name"</span><span class="p">,</span> <span class="s2">"subjects"</span><span class="p">,</span> <span class="s2">"general_template"</span><span class="p">):</span>
+</span><span data-line="86">        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+</span><span data-line="87">            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2"> has no '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+</span><span data-line="88">    <span class="k">return</span> <span class="n">config</span></div>
 
-</span><span data-line="83">
-</span><span data-line="84">
+</span><span data-line="89">
+</span><span data-line="90">
 <div class="viewcode-block" id="generate_quarto_file">
 <a class="viewcode-back" href="../../api_generated/village_report_generator.generate_quarto_file.generate_quarto_file.html#village_report_generator.generate_quarto_file.generate_quarto_file">[docs]</a>
-</span><span data-line="85"><span class="k">def</span><span class="w"> </span><span class="nf">generate_quarto_file</span><span class="p">(</span>
-</span><span data-line="86">    <span class="n">config_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-</span><span data-line="87">    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="88">    <span class="n">docs_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="89">    <span class="n">subject_dates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="90"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-</span><span data-line="91"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="92"><span class="sd">    Writes the .qmd report of the project of config_file for a date</span>
-</span><span data-line="93"><span class="sd">    (YYYY-MM-DD) to &lt;docs_path&gt;/quarto_files/&lt;config name&gt;_&lt;date&gt;.qmd and</span>
-</span><span data-line="94"><span class="sd">    returns its path.</span>
-</span><span data-line="95">
-</span><span data-line="96"><span class="sd">    With subject_dates, it is the report of an archived project (see</span>
-</span><span data-line="97"><span class="sd">    build_quarto_content), written to &lt;config name&gt;_archive.qmd.</span>
-</span><span data-line="98">
-</span><span data-line="99"><span class="sd">    Args:</span>
-</span><span data-line="100"><span class="sd">        config_file: path to the configuration file (.json).</span>
-</span><span data-line="101"><span class="sd">        date: date in the format 'YYYY-MM-DD'.</span>
-</span><span data-line="102"><span class="sd">        docs_path: folder of the website (defaults to the docs folder of this repository).</span>
-</span><span data-line="103"><span class="sd">        subject_dates: last day with data of each subject (archived projects).</span>
-</span><span data-line="104"><span class="sd">    """</span>
-</span><span data-line="105">    <span class="n">config</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
-</span><span data-line="106">    <span class="n">docs_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">docs_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">docs_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">DOCS_PATH</span>
-</span><span data-line="107">    <span class="n">suffix</span> <span class="o">=</span> <span class="s2">"archive"</span> <span class="k">if</span> <span class="n">subject_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">date</span>
-</span><span data-line="108">    <span class="n">output_file</span> <span class="o">=</span> <span class="n">docs_path</span> <span class="o">/</span> <span class="s2">"quarto_files"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.qmd"</span>
-</span><span data-line="109">    <span class="n">output_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="110">    <span class="n">output_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">build_quarto_content</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">subject_dates</span><span class="p">))</span>
-</span><span data-line="111">    <span class="k">return</span> <span class="n">output_file</span></div>
+</span><span data-line="91"><span class="k">def</span><span class="w"> </span><span class="nf">generate_quarto_file</span><span class="p">(</span>
+</span><span data-line="92">    <span class="n">config_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="93">    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="94">    <span class="n">docs_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="95">    <span class="n">subject_dates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="96"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+</span><span data-line="97"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="98"><span class="sd">    Writes the .qmd report of the project of config_file for a date</span>
+</span><span data-line="99"><span class="sd">    (YYYY-MM-DD) to &lt;docs_path&gt;/quarto_files/&lt;config name&gt;_&lt;date&gt;.qmd and</span>
+</span><span data-line="100"><span class="sd">    returns its path.</span>
+</span><span data-line="101">
+</span><span data-line="102"><span class="sd">    With subject_dates, it is the report of an archived project (see</span>
+</span><span data-line="103"><span class="sd">    build_quarto_content), written to &lt;config name&gt;_archive.qmd.</span>
+</span><span data-line="104">
+</span><span data-line="105"><span class="sd">    Args:</span>
+</span><span data-line="106"><span class="sd">        config_file: path to the configuration file (.json).</span>
+</span><span data-line="107"><span class="sd">        date: date in the format 'YYYY-MM-DD'.</span>
+</span><span data-line="108"><span class="sd">        docs_path: folder of the website (defaults to the docs folder of this repository).</span>
+</span><span data-line="109"><span class="sd">        subject_dates: last day with data of each subject (archived projects).</span>
+</span><span data-line="110"><span class="sd">    """</span>
+</span><span data-line="111">    <span class="n">config</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+</span><span data-line="112">    <span class="n">docs_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">docs_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">docs_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">DOCS_PATH</span>
+</span><span data-line="113">    <span class="n">suffix</span> <span class="o">=</span> <span class="s2">"archive"</span> <span class="k">if</span> <span class="n">subject_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">date</span>
+</span><span data-line="114">    <span class="n">output_file</span> <span class="o">=</span> <span class="n">docs_path</span> <span class="o">/</span> <span class="s2">"quarto_files"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.qmd"</span>
+</span><span data-line="115">    <span class="n">output_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="116">    <span class="n">output_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">build_quarto_content</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">subject_dates</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span>
+</span><span data-line="117">    <span class="k">return</span> <span class="n">output_file</span></div>
 
-</span><span data-line="112">
-</span><span data-line="113">
-</span><span data-line="114"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-</span><span data-line="115">    <span class="c1"># Use fire to create a command line interface</span>
-</span><span data-line="116">    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">generate_quarto_file</span><span class="p">)</span>
-</span><span data-line="117">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Quarto file generation complete."</span><span class="p">)</span>
+</span><span data-line="118">
+</span><span data-line="119">
+</span><span data-line="120"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span data-line="121">    <span class="c1"># Use fire to create a command line interface</span>
+</span><span data-line="122">    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">generate_quarto_file</span><span class="p">)</span>
+</span><span data-line="123">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Quarto file generation complete."</span><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

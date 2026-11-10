@@ -21,6 +21,36 @@ execute:
   fig-align: center
 jupyter: python3
 ---
+```{=html}
+<style>
+  .section-title { margin: 28px 0 10px; padding: 8px 14px; border-left: 5px solid #2a3f5f;
+                   background: #f3f5f9; border-radius: 0 6px 6px 0; }
+  .section-title h3 { margin: 0; font-size: 1.25rem; color: #2a3f5f; }
+  .section-title .nav-days { margin-top: 4px; font-size: 0.9rem; }
+  .section-title .nav-days a { margin-right: 16px; }
+</style>
+<script>
+// links such as report.html#NUO077 open the tab of that subject, and the
+// address shows the tab that is open (so that it can be shared)
+document.addEventListener("DOMContentLoaded", function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll(".panel-tabset .nav-link"));
+  function showTab(name) {
+    var link = links.find(function (l) { return l.textContent.trim() === name; });
+    if (!link) { return false; }
+    if (window.bootstrap && bootstrap.Tab) { bootstrap.Tab.getOrCreateInstance(link).show(); } else { link.click(); }
+    return true;
+  }
+  var name = decodeURIComponent(window.location.hash.slice(1));
+  if (name && showTab(name)) { window.scrollTo(0, 0); }
+  links.forEach(function (link) {
+    link.addEventListener("shown.bs.tab", function () {
+      history.replaceState(null, "", "#" + encodeURIComponent(link.textContent.trim()));
+    });
+  });
+});
+</script>
+```
+
 ::: {.panel-tabset}
 # Overview
 
@@ -42,6 +72,35 @@ from lecilab_behavior_analysis.reports import overview
 
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
 clear_output(wait=True)
+
+
+def section_title(title, report_name="", date=None, mouse=None):
+    """
+    Title of a section of the tab of a subject. With report_name (daily
+    reports), links to the same subject in the reports of the previous and
+    next days.
+    """
+    import glob
+    import html as html_text
+    import re
+
+    from IPython.display import HTML
+
+    nav = ""
+    if report_name and date:
+        pattern = re.compile(re.escape(report_name) + r"_(\d{4}-\d{2}-\d{2})\.html$")
+        days = sorted(m.group(1) for f in glob.glob(f"{report_name}_*.html") if (m := pattern.match(f)))
+        before = [d for d in days if d < date]
+        after = [d for d in days if d > date]
+        # the next report is usually made the next day
+        next_day = after[0] if after else (pd.to_datetime(date) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+        target = f"#{mouse}" if mouse else ""
+        links = []
+        if before:
+            links.append(f'<a href="{report_name}_{before[-1]}.html{target}">&larr; {before[-1]}</a>')
+        links.append(f'<a href="{report_name}_{next_day}.html{target}">{next_day} &rarr;</a>')
+        nav = f'<div class="nav-days">{"".join(links)}</div>'
+    display(HTML(f'<div class="section-title"><h3>{html_text.escape(title)}</h3>{nav}</div>'))
 
 
 def show(fig):
@@ -156,19 +215,6 @@ session_hours = 48
 subject_df = df[df["subject"] == mouse] if not df.empty else df
 if not subject_df.empty:
     subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
-display(Markdown(f"Summary of the training history of {mouse} up to {subject_date}"))
-```
-
-```{python}
-#| label: subject_summary_for_NUO001
-if subject_df.empty:
-    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
-else:
-    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
-        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
-    )
-    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
-    show(fig)
 ```
 
 ```{python}
@@ -180,15 +226,28 @@ elif session_hours is None:
 else:
     # sessions that started in the last session_hours hours of training
     sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
-    period = f"the last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "", subject_date, mouse)
 if sdf.empty:
     display(Markdown(f"{mouse} did not train on {subject_date}."))
 else:
-    display(Markdown(f"Analysis of {period}"))
     fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
         sdf, perf_window=50, width=15, height=10
     )
     problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO001
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
     show(fig)
 ```
 
@@ -206,19 +265,6 @@ session_hours = 48
 subject_df = df[df["subject"] == mouse] if not df.empty else df
 if not subject_df.empty:
     subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
-display(Markdown(f"Summary of the training history of {mouse} up to {subject_date}"))
-```
-
-```{python}
-#| label: subject_summary_for_NUO003
-if subject_df.empty:
-    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
-else:
-    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
-        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
-    )
-    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
-    show(fig)
 ```
 
 ```{python}
@@ -230,15 +276,28 @@ elif session_hours is None:
 else:
     # sessions that started in the last session_hours hours of training
     sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
-    period = f"the last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "", subject_date, mouse)
 if sdf.empty:
     display(Markdown(f"{mouse} did not train on {subject_date}."))
 else:
-    display(Markdown(f"Analysis of {period}"))
     fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
         sdf, perf_window=50, width=15, height=10
     )
     problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO003
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
     show(fig)
 ```
 

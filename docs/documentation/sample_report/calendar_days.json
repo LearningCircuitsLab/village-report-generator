@@ -1,5 +1,8 @@
 {
  "sample_COT_cannula_GAD2": {
+  "active_setups": [
+   "village01"
+  ],
   "data_days": [
    "2026-05-18",
    "2026-05-19",
@@ -285,6 +288,9 @@
   "status": "archived"
  },
  "sample_habituation": {
+  "active_setups": [
+   "village01"
+  ],
   "data_days": [
    "2026-05-18",
    "2026-05-19",
