@@ -1,0 +1,19 @@
+{
+    "project_name": "frequency_vs_locationPureTone_data",
+    "subjects": [
+        "NUO066",
+        "NUO067",
+        "NUO068",
+        "NUO069",
+        "NUO070",
+        "NUO071",
+        "NUO072",
+        "NUO073",
+        "NUO074",
+        "NUO075",
+        "NUO076",
+        "NUO077"
+    ],
+    "general_template": "visual_and_COT_quarto_general_template.txt",
+    "subject_template": "visual_and_COT_quarto_subject_template.txt"
+}
