@@ -1,0 +1,19 @@
+{
+    "project_name": "dual2AFC_iDisco_data",
+    "subjects": [
+        "NUO078",
+        "NUO079",
+        "NUO080",
+        "NUO081",
+        "NUO082",
+        "NUO083",
+        "NUO084",
+        "NUO085",
+        "NUO086",
+        "NUO087",
+        "NUO088",
+        "NUO089"
+    ],
+    "general_template": "visual_and_COT_quarto_general_template.txt",
+    "subject_template": "visual_and_COT_quarto_subject_template.txt"
+}
