@@ -81,3 +81,10 @@ venv/
 
 # written by setuptools_scm
 **/_version.py
+
+# reports rendered locally to check the generator
+sample_reports/
+
+# documentation build (the site is built into docs/documentation by an action)
+docs_source/api_generated/
+docs_source/_extra/

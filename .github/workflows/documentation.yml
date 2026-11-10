@@ -1,0 +1,106 @@
+name: Documentation
+
+# Builds the documentation (docs_source/) on every push to main that changes
+# the code, the sample data or the documentation, and on manual dispatch.
+# It also renders the reports of the sample data with the current code, as
+# the example of the documentation.
+#
+# GitHub Pages publishes the docs/ folder of main (the daily reports), so the
+# site is committed to docs/documentation/ and published at
+# https://learningcircuitslab.github.io/village-report-generator/documentation/
+# Only the folders needed are checked out (docs/ holds years of reports).
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "village_report_generator/**"
+      - "sample_data/**"
+      - "docs_source/**"
+      - "README.md"
+      - ".github/workflows/documentation.yml"
+  pull_request:
+    paths:
+      - "village_report_generator/**"
+      - "sample_data/**"
+      - "docs_source/**"
+  workflow_dispatch:
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # branch of lecilab-behavior-analysis used to render the sample reports
+  LECILAB_REF: main
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout the code, the sample data and the documentation
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            village_report_generator
+            sample_data
+            docs_source
+            docs/assets
+            docs/documentation
+            tests
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install the generator, the analysis package and village
+        run: |
+          sudo apt-get update && sudo apt-get install -y libasound2-dev
+          python -m pip install --upgrade pip
+          pip install -e . pytest
+          pip install "git+https://github.com/LearningCircuitsLab/lecilab-behavior-analysis@${LECILAB_REF}"
+          pip install git+https://github.com/BrainCircuitsBehaviorLab/village PyQt5
+          # used for the index; its numpy<2 pin is not needed
+          pip install --no-deps plotly-calplot
+          pip install jupyter ipykernel nbformat nbclient pyyaml
+          pip install -r docs_source/requirements.txt
+
+      - name: Tests
+        run: python -m pytest tests -o addopts=""
+
+      - name: Render the reports of the sample data
+        # the documentation is built even if this fails (the example page
+        # then links to reports that are not there)
+        continue-on-error: true
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -m village_report_generator.village_report_generator --sample
+          mkdir -p docs_source/_extra
+          cp -r sample_reports docs_source/_extra/sample_report
+
+      - name: Build the documentation
+        run: |
+          rm -rf docs/documentation
+          sphinx-build -b html docs_source docs/documentation
+
+      - name: Publish (commit to main)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/documentation
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Update documentation [skip ci]"
+          # the daily reports may have been pushed in the meantime
+          for attempt in 1 2 3; do
+            git pull --rebase && git push && exit 0
+            sleep 10
+          done
+          exit 1

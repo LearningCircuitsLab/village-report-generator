@@ -1,0 +1,251 @@
+date;type;subject;description
+2026-05-18 10:08:38;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-18 10:08:38;INFO;system;Cam BOX successfully initialized
+2026-05-18 10:08:38;INFO;system;Motor successfully initialized
+2026-05-18 10:08:38;INFO;system;The scale has been tared.
+2026-05-18 10:08:38;INFO;system;Scale successfully initialized
+2026-05-18 10:08:39;INFO;system;Telegram bot successfully initialized
+2026-05-18 10:08:41;INFO;system;Training protocol successfully imported
+2026-05-18 10:08:41;INFO;system;Custom Session plot successfully imported
+2026-05-18 10:08:41;INFO;system;Custom Subject plot successfully imported
+2026-05-18 10:08:41;INFO;system;Custom Online plot successfully imported
+2026-05-18 10:08:41;INFO;system;Custom After Session Run not found, using default
+2026-05-18 10:08:41;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-18 10:08:41;INFO;system;Custom Camera Trigger not found, using default
+2026-05-18 10:08:41;INFO;system;2 tasks successfully imported
+2026-05-18 10:08:41;START;system;VILLAGE started
+2026-05-18 10:10:26;START;NUO065;TwoAFC started
+2026-05-18 10:10:26;INFO;system;Going to RUN_MANUAL State
+2026-05-18 11:00:00;INFO;system;temperature and humidity: 21.78ºC / 56.48%
+2026-05-18 11:01:11;INFO;NUO065;Task manually stopped.
+2026-05-18 11:01:14;INFO;NUO065;Session and video data saved.
+2026-05-18 11:01:14;END;NUO065;TwoAFC ended
+2026-05-18 11:01:14;INFO;system;Going to SYNC State
+2026-05-18 11:01:24;INFO;system;Sync completed successfully
+2026-05-18 11:01:24;INFO;system;Going to WAIT State
+2026-05-18 11:23:15;START;NUO057;TwoAFC started
+2026-05-18 11:23:15;INFO;system;Going to RUN_MANUAL State
+2026-05-18 12:00:00;INFO;system;temperature and humidity: 21.45ºC / 58.16%
+2026-05-18 12:22:05;INFO;NUO057;Task manually stopped.
+2026-05-18 12:22:10;INFO;NUO057;Session and video data saved.
+2026-05-18 12:22:10;END;NUO057;TwoAFC ended
+2026-05-18 12:22:10;INFO;system;Going to SYNC State
+2026-05-18 12:22:21;INFO;system;Sync completed successfully
+2026-05-18 12:22:21;INFO;system;Going to WAIT State
+2026-05-18 12:41:53;INFO;system;Settings modified.
+2026-05-18 12:41:53;END;system;VILLAGE ended
+2026-05-19 10:02:16;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-19 10:02:16;INFO;system;Cam BOX successfully initialized
+2026-05-19 10:02:16;INFO;system;Motor successfully initialized
+2026-05-19 10:02:16;INFO;system;The scale has been tared.
+2026-05-19 10:02:16;INFO;system;Scale successfully initialized
+2026-05-19 10:02:17;INFO;system;Telegram bot successfully initialized
+2026-05-19 10:02:19;INFO;system;Training protocol successfully imported
+2026-05-19 10:02:19;INFO;system;Custom Session plot successfully imported
+2026-05-19 10:02:19;INFO;system;Custom Subject plot successfully imported
+2026-05-19 10:02:19;INFO;system;Custom Online plot successfully imported
+2026-05-19 10:02:19;INFO;system;Custom After Session Run not found, using default
+2026-05-19 10:02:19;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-19 10:02:19;INFO;system;Custom Camera Trigger not found, using default
+2026-05-19 10:02:19;INFO;system;2 tasks successfully imported
+2026-05-19 10:02:19;START;system;VILLAGE started
+2026-05-19 10:24:50;START;NUO065;TwoAFC started
+2026-05-19 10:24:50;INFO;system;Going to RUN_MANUAL State
+2026-05-19 11:00:00;INFO;system;temperature and humidity: 21.91ºC / 61.17%
+2026-05-19 11:27:58;INFO;NUO065;Task manually stopped.
+2026-05-19 11:28:01;INFO;NUO065;Session and video data saved.
+2026-05-19 11:28:01;END;NUO065;TwoAFC ended
+2026-05-19 11:28:01;INFO;system;Going to SYNC State
+2026-05-19 11:28:11;INFO;system;Sync completed successfully
+2026-05-19 11:28:11;INFO;system;Going to WAIT State
+2026-05-19 11:32:48;START;NUO057;TwoAFC started
+2026-05-19 11:32:48;INFO;system;Going to RUN_MANUAL State
+2026-05-19 12:00:00;INFO;system;temperature and humidity: 21.75ºC / 59.31%
+2026-05-19 12:24:03;INFO;NUO057;Task manually stopped.
+2026-05-19 12:24:07;INFO;NUO057;Session and video data saved.
+2026-05-19 12:24:07;END;NUO057;TwoAFC ended
+2026-05-19 12:24:07;INFO;system;Going to SYNC State
+2026-05-19 12:24:16;INFO;system;Sync completed successfully
+2026-05-19 12:24:16;INFO;system;Going to WAIT State
+2026-05-19 12:27:08;INFO;system;Settings modified.
+2026-05-19 12:27:08;END;system;VILLAGE ended
+2026-05-20 09:50:10;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-20 09:50:10;INFO;system;Cam BOX successfully initialized
+2026-05-20 09:50:10;INFO;system;Motor successfully initialized
+2026-05-20 09:50:10;INFO;system;The scale has been tared.
+2026-05-20 09:50:10;INFO;system;Scale successfully initialized
+2026-05-20 09:50:11;INFO;system;Telegram bot successfully initialized
+2026-05-20 09:50:14;INFO;system;Training protocol successfully imported
+2026-05-20 09:50:14;INFO;system;Custom Session plot successfully imported
+2026-05-20 09:50:14;INFO;system;Custom Subject plot successfully imported
+2026-05-20 09:50:14;INFO;system;Custom Online plot successfully imported
+2026-05-20 09:50:14;INFO;system;Custom After Session Run not found, using default
+2026-05-20 09:50:14;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-20 09:50:14;INFO;system;Custom Camera Trigger not found, using default
+2026-05-20 09:50:14;INFO;system;2 tasks successfully imported
+2026-05-20 09:50:14;START;system;VILLAGE started
+2026-05-20 09:50:52;START;NUO065;TwoAFC started
+2026-05-20 09:50:52;INFO;system;Going to RUN_MANUAL State
+2026-05-20 10:00:00;INFO;system;temperature and humidity: 21.34ºC / 62.86%
+2026-05-20 10:49:58;INFO;NUO065;Task manually stopped.
+2026-05-20 10:50:01;INFO;NUO065;Session and video data saved.
+2026-05-20 10:50:01;END;NUO065;TwoAFC ended
+2026-05-20 10:50:01;INFO;system;Going to SYNC State
+2026-05-20 10:50:11;INFO;system;Sync completed successfully
+2026-05-20 10:50:11;INFO;system;Going to WAIT State
+2026-05-20 10:51:57;START;NUO057;TwoAFC started
+2026-05-20 10:51:57;INFO;system;Going to RUN_MANUAL State
+2026-05-20 11:00:00;INFO;system;temperature and humidity: 21.57ºC / 62.46%
+2026-05-20 11:59:28;INFO;NUO057;Task manually stopped.
+2026-05-20 11:59:33;INFO;NUO057;Session and video data saved.
+2026-05-20 11:59:33;END;NUO057;TwoAFC ended
+2026-05-20 11:59:33;INFO;system;Going to SYNC State
+2026-05-20 11:59:45;INFO;system;Sync completed successfully
+2026-05-20 11:59:45;INFO;system;Going to WAIT State
+2026-05-20 12:00:00;INFO;system;temperature and humidity: 21.42ºC / 62.66%
+2026-05-20 13:00:00;INFO;system;temperature and humidity: 21.27ºC / 62.42%
+2026-05-20 14:00:00;INFO;system;temperature and humidity: 21.27ºC / 62.91%
+2026-05-20 15:00:00;INFO;system;temperature and humidity: 21.24ºC / 63.26%
+2026-05-20 15:05:23;INFO;system;Settings modified.
+2026-05-20 15:05:23;END;system;VILLAGE ended
+2026-05-21 09:26:06;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-21 09:26:06;INFO;system;Cam BOX successfully initialized
+2026-05-21 09:26:06;INFO;system;Motor successfully initialized
+2026-05-21 09:26:06;INFO;system;The scale has been tared.
+2026-05-21 09:26:06;INFO;system;Scale successfully initialized
+2026-05-21 09:26:07;INFO;system;Telegram bot successfully initialized
+2026-05-21 09:26:09;INFO;system;Training protocol successfully imported
+2026-05-21 09:26:09;INFO;system;Custom Session plot successfully imported
+2026-05-21 09:26:09;INFO;system;Custom Subject plot successfully imported
+2026-05-21 09:26:09;INFO;system;Custom Online plot successfully imported
+2026-05-21 09:26:09;INFO;system;Custom After Session Run not found, using default
+2026-05-21 09:26:09;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-21 09:26:09;INFO;system;Custom Camera Trigger not found, using default
+2026-05-21 09:26:09;INFO;system;2 tasks successfully imported
+2026-05-21 09:26:09;START;system;VILLAGE started
+2026-05-21 10:00:00;INFO;system;temperature and humidity: 21.45ºC / 61.73%
+2026-05-21 10:00:53;START;NUO065;TwoAFC started
+2026-05-21 10:00:53;INFO;system;Going to RUN_MANUAL State
+2026-05-21 11:00:00;INFO;system;temperature and humidity: 21.38ºC / 61.88%
+2026-05-21 11:01:55;INFO;NUO065;Task manually stopped.
+2026-05-21 11:01:58;INFO;NUO065;Session and video data saved.
+2026-05-21 11:01:58;END;NUO065;TwoAFC ended
+2026-05-21 11:01:58;INFO;system;Going to SYNC State
+2026-05-21 11:02:09;INFO;system;Sync completed successfully
+2026-05-21 11:02:09;INFO;system;Going to WAIT State
+2026-05-21 11:10:17;START;NUO057;TwoAFC started
+2026-05-21 11:10:17;INFO;system;Going to RUN_MANUAL State
+2026-05-21 12:00:00;INFO;system;temperature and humidity: 21.30ºC / 61.32%
+2026-05-21 12:10:15;INFO;NUO057;Task manually stopped.
+2026-05-21 12:10:21;INFO;NUO057;Session and video data saved.
+2026-05-21 12:10:21;END;NUO057;TwoAFC ended
+2026-05-21 12:10:21;INFO;system;Going to SYNC State
+2026-05-21 12:10:32;INFO;system;Sync completed successfully
+2026-05-21 12:10:32;INFO;system;Going to WAIT State
+2026-05-21 12:19:16;INFO;system;Settings modified.
+2026-05-21 12:19:16;END;system;VILLAGE ended
+2026-05-21 19:58:25;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-21 19:58:25;INFO;system;Cam BOX successfully initialized
+2026-05-21 19:58:26;INFO;system;Motor successfully initialized
+2026-05-21 19:58:26;INFO;system;The scale has been tared.
+2026-05-21 19:58:26;INFO;system;Scale successfully initialized
+2026-05-21 19:58:27;INFO;system;Telegram bot successfully initialized
+2026-05-21 19:58:28;INFO;system;Training protocol successfully imported
+2026-05-21 19:58:28;INFO;system;Custom Session plot successfully imported
+2026-05-21 19:58:28;INFO;system;Custom Subject plot successfully imported
+2026-05-21 19:58:28;INFO;system;Custom Online plot successfully imported
+2026-05-21 19:58:28;INFO;system;Custom After Session Run not found, using default
+2026-05-21 19:58:28;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-21 19:58:28;INFO;system;Custom Camera Trigger not found, using default
+2026-05-21 19:58:28;INFO;system;2 tasks successfully imported
+2026-05-21 19:58:28;START;system;VILLAGE started
+2026-05-21 20:00:00;INFO;system;temperature and humidity: 21.58ºC / 60.65%
+2026-05-21 20:00:00;ALARM;system;No detections in the last 24 hours: NUO058
+2026-05-21 20:00:00;ALARM;system;No sessions in the last 24 hours: NUO058
+2026-05-21 20:00:00;ALARM;system;Low water consumption in the last 24 hours: NUO058
+2026-05-21 20:00:01;INFO;system;Going to SYNC State
+2026-05-21 20:00:02;INFO;system;Going to WAIT State
+2026-05-21 20:36:09;INFO;system;Settings modified.
+2026-05-21 20:36:09;END;system;VILLAGE ended
+2026-05-22 10:28:49;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-22 10:28:49;INFO;system;Cam BOX successfully initialized
+2026-05-22 10:28:49;INFO;system;Motor successfully initialized
+2026-05-22 10:28:50;INFO;system;Motor successfully initialized
+2026-05-22 10:28:50;INFO;system;The scale has been tared.
+2026-05-22 10:28:50;INFO;system;Scale successfully initialized
+2026-05-22 10:28:50;INFO;system;Telegram bot successfully initialized
+2026-05-22 10:28:53;INFO;system;Training protocol successfully imported
+2026-05-22 10:28:53;INFO;system;Custom Session plot successfully imported
+2026-05-22 10:28:53;INFO;system;Custom Subject plot successfully imported
+2026-05-22 10:28:53;INFO;system;Custom Online plot successfully imported
+2026-05-22 10:28:53;INFO;system;Custom After Session Run not found, using default
+2026-05-22 10:28:53;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-22 10:28:53;INFO;system;Custom Camera Trigger not found, using default
+2026-05-22 10:28:53;INFO;system;2 tasks successfully imported
+2026-05-22 10:28:53;START;system;VILLAGE started
+2026-05-22 10:43:56;START;NUO065;TwoAFC started
+2026-05-22 10:43:56;INFO;system;Going to RUN_MANUAL State
+2026-05-22 11:00:00;INFO;system;temperature and humidity: 21.47ºC / 61.96%
+2026-05-22 11:34:41;INFO;NUO065;Task manually stopped.
+2026-05-22 11:34:45;INFO;NUO065;Session and video data saved.
+2026-05-22 11:34:45;END;NUO065;TwoAFC ended
+2026-05-22 11:34:45;INFO;system;Going to SYNC State
+2026-05-22 11:34:54;INFO;system;Sync completed successfully
+2026-05-22 11:34:54;INFO;system;Going to WAIT State
+2026-05-22 12:00:00;INFO;system;temperature and humidity: 21.59ºC / 62.28%
+2026-05-22 12:04:59;START;NUO057;TwoAFC started
+2026-05-22 12:04:59;INFO;system;Going to RUN_MANUAL State
+2026-05-22 12:50:29;INFO;NUO057;Task manually stopped.
+2026-05-22 12:50:33;INFO;NUO057;Session and video data saved.
+2026-05-22 12:50:33;END;NUO057;TwoAFC ended
+2026-05-22 12:50:33;INFO;system;Going to SYNC State
+2026-05-22 12:50:42;INFO;system;Sync completed successfully
+2026-05-22 12:50:42;INFO;system;Going to WAIT State
+2026-05-22 13:00:00;INFO;system;temperature and humidity: 21.79ºC / 61.52%
+2026-05-22 13:00:43;INFO;system;Settings modified.
+2026-05-22 13:00:43;END;system;VILLAGE ended
+2026-05-23 12:41:24;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-23 12:41:24;INFO;system;Cam BOX successfully initialized
+2026-05-23 12:41:24;INFO;system;Motor successfully initialized
+2026-05-23 12:41:25;INFO;system;Motor successfully initialized
+2026-05-23 12:41:25;INFO;system;The scale has been tared.
+2026-05-23 12:41:25;INFO;system;Scale successfully initialized
+2026-05-23 12:41:25;INFO;system;Telegram bot successfully initialized
+2026-05-23 12:41:28;INFO;system;Training protocol successfully imported
+2026-05-23 12:41:28;INFO;system;Custom Session plot successfully imported
+2026-05-23 12:41:28;INFO;system;Custom Subject plot successfully imported
+2026-05-23 12:41:28;INFO;system;Custom Online plot successfully imported
+2026-05-23 12:41:28;INFO;system;Custom After Session Run not found, using default
+2026-05-23 12:41:28;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-23 12:41:28;INFO;system;Custom Camera Trigger not found, using default
+2026-05-23 12:41:28;INFO;system;2 tasks successfully imported
+2026-05-23 12:41:28;START;system;VILLAGE started
+2026-05-23 12:44:08;START;NUO065;TwoAFC started
+2026-05-23 12:44:08;INFO;system;Going to RUN_MANUAL State
+2026-05-23 13:00:00;INFO;system;temperature and humidity: 21.82ºC / 62.37%
+2026-05-23 13:34:45;INFO;system;Cam CORRIDOR successfully initialized
+2026-05-23 13:34:45;INFO;system;Cam BOX successfully initialized
+2026-05-23 13:34:46;INFO;system;Motor successfully initialized
+2026-05-23 13:34:46;INFO;system;The scale has been tared.
+2026-05-23 13:34:46;INFO;system;Scale successfully initialized
+2026-05-23 13:34:46;INFO;system;Telegram bot successfully initialized
+2026-05-23 13:34:47;INFO;system;Training protocol successfully imported
+2026-05-23 13:34:47;INFO;system;Custom Session plot successfully imported
+2026-05-23 13:34:47;INFO;system;Custom Subject plot successfully imported
+2026-05-23 13:34:47;INFO;system;Custom Online plot successfully imported
+2026-05-23 13:34:47;INFO;system;Custom After Session Run not found, using default
+2026-05-23 13:34:47;INFO;system;Custom Change Cycle Run not found, using default
+2026-05-23 13:34:47;INFO;system;Custom Camera Trigger not found, using default
+2026-05-23 13:34:47;INFO;system;2 tasks successfully imported
+2026-05-23 13:34:47;START;system;VILLAGE started
+2026-05-23 13:36:25;START;NUO057;TwoAFC started
+2026-05-23 13:36:25;INFO;system;Going to RUN_MANUAL State
+2026-05-23 14:00:00;INFO;system;temperature and humidity: 21.82ºC / 62.23%
+2026-05-23 14:37:57;INFO;NUO057;Task manually stopped.
+2026-05-23 14:38:01;INFO;NUO057;Session and video data saved.
+2026-05-23 14:38:01;END;NUO057;TwoAFC ended
+2026-05-23 14:38:01;INFO;system;Going to SYNC State
+2026-05-23 14:38:15;INFO;system;Sync completed successfully
+2026-05-23 14:38:15;INFO;system;Going to WAIT State
+2026-05-23 14:42:10;INFO;system;Settings modified.
+2026-05-23 14:42:10;END;system;VILLAGE ended

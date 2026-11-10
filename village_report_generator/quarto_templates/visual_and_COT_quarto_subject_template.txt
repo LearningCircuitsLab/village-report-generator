@@ -6,24 +6,27 @@ Summary of the subject's full training history
 ```{python}
 #| label: subject_summary_for_[[[subject]]]
 mouse = "[[[subject]]]"
-subject_df = df[df['subject'] == mouse]
-fig1 = subject_progress_figure(subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df)
-plt.close('all')
-fig1
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {report_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
 ```
 
 Analysis of data from [[[date]]]
 ```{python}
 #| label: date_summary_for_[[[subject]]]
-date = "[[[date]]]"
-subject_df = dft.add_day_column_to_df(subject_df)
-subject_df = dft.add_trial_of_day_column_to_df(subject_df)
-sdf = subject_df[subject_df["year_month_day"] == date]
-try:
-    fig = session_summary_figure(sdf, perf_window=50, width=15, height=10, events_df=events_df)
-    plt.close('all')
-    display(fig)
-except (KeyError, ValueError) as e:
-    plt.close('all')
-    print(f"Skipping session_summary_figure for {date}: {type(e).__name__} - {e}")
+sdf = subject_df[subject_df["year_month_day"] == report_date] if not subject_df.empty else subject_df
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {report_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {report_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {report_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
 ```

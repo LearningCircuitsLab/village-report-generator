@@ -1,65 +1,83 @@
 # this script generates a quarto file, that then is used by quarto to generate the report
 
-# import necessary libraries
-import fire
 import json
 from pathlib import Path
+from typing import List, Optional, Union
 
-def generate_quarto_file(config_file: str, date: str) -> None:
+import fire
+
+TEMPLATES_PATH = Path(__file__).parent / "quarto_templates"
+DOCS_PATH = Path(__file__).parent.parent / "docs"
+# last tab of every report: the panels and cells that could not be generated
+PROBLEMS_TEMPLATE = "problems_template.txt"
+
+
+def config_setups(config: dict) -> Optional[List[str]]:
     """
-    Generates a quarto file based on the provided configuration file.
-    
+    Setups (boxes) of a project to read the events and sessions summary from.
+    None (the default) means every setup found in the project folder when the
+    report is rendered. "setup_name" in the configuration (a name or a list)
+    limits it to those setups.
+    """
+    names = config.get("setup_name")
+    if names is None:
+        return None
+    return [names] if isinstance(names, str) else list(names)
+
+
+def build_quarto_content(config: dict, date: str) -> str:
+    """
+    Text of the .qmd report of a project for a date (YYYY-MM-DD), from the
+    templates named in its configuration: the general template (the overview)
+    and, if there is one, the subject template, repeated for each subject.
+    """
+    general = (TEMPLATES_PATH / config["general_template"]).read_text()
+    content = (
+        general.replace("[[[project_name]]]", config["project_name"])
+        .replace("[[[subjects]]]", str(config["subjects"]))
+        .replace("[[[date]]]", date)
+        .replace("[[[setups]]]", str(config_setups(config)))
+    )
+
+    if "subject_template" in config:
+        subject_template = (TEMPLATES_PATH / config["subject_template"]).read_text()
+        for subject in config["subjects"]:
+            subject_content = (
+                subject_template.replace("[[[subject]]]", subject)
+                .replace("[[[project_name]]]", config["project_name"])
+                .replace("[[[date]]]", date)
+            )
+            content += "\n" + subject_content
+
+    content += "\n" + (TEMPLATES_PATH / PROBLEMS_TEMPLATE).read_text()
+    content += "\n" + ":::"
+    return content
+
+
+def generate_quarto_file(config_file: Union[str, Path], date: str, docs_path: Optional[Union[str, Path]] = None) -> Path:
+    """
+    Writes the .qmd report of the project of config_file for a date
+    (YYYY-MM-DD) to <docs_path>/quarto_files/<config name>_<date>.qmd and
+    returns its path.
+
     Args:
-        config_file (str): Path to the configuration file.
-        date (str): Date in the format 'YYYY-MM-DD'.
+        config_file: path to the configuration file (.json).
+        date: date in the format 'YYYY-MM-DD'.
+        docs_path: folder of the website (defaults to the docs folder of this repository).
     """
-    # TODO: add checkups for the inputs
-    # Load the configuration file
-    config_dict = json.load(open(config_file, 'r'))
-    # check if there is a subject template in the config file
-    use_subject_template = True if 'subject_template' in config_dict else False
-    # get the path to the template files
-    general_template_path = Path(__file__).parent / 'quarto_templates' / config_dict['general_template']
-    if use_subject_template:
-        subject_template_path = Path(__file__).parent / 'quarto_templates' / config_dict['subject_template']
+    config = json.loads(Path(config_file).read_text())
+    for key in ("project_name", "subjects", "general_template"):
+        if key not in config:
+            raise KeyError(f"{config_file} has no '{key}'")
 
-    # load the general template file, that are txt
-    with open(general_template_path, 'r') as f:
-        quarto_content = f.read()
-    # load the subject template file, that are txt
-    if use_subject_template:
-        with open(subject_template_path, 'r') as f:
-            subject_template_content = f.read()
-    
-    # substitute the project name in the general template
-    quarto_content = quarto_content.replace('[[[project_name]]]', config_dict['project_name'])
-    # substitute the subjects in the general template
-    quarto_content = quarto_content.replace('[[[subjects]]]', str(config_dict['subjects']))
-    # substitute the date in the general template
-    quarto_content = quarto_content.replace('[[[date]]]', date)
-    # substitute the setup name in the general template
-    quarto_content = quarto_content.replace('[[[setup_name]]]', config_dict['setup_name'])
+    docs_path = Path(docs_path) if docs_path is not None else DOCS_PATH
+    output_file = docs_path / "quarto_files" / f"{Path(config_file).stem}_{date}.qmd"
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(build_quarto_content(config, date))
+    return output_file
 
-    if use_subject_template:
-        # for each subject, substitute the subject and date and append to the content
-        for subject in config_dict['subjects']:
-            subject_content = subject_template_content.replace('[[[subject]]]', subject)
-            subject_content = subject_content.replace('[[[project_name]]]', config_dict['project_name'])
-            subject_content = subject_content.replace('[[[date]]]', date)
-
-            # append the subject content to the general content
-            quarto_content += '\n' + subject_content
-    
-    quarto_content += '\n' + ":::"
-
-    # write the final content to a .qmd file
-    config_file_name = Path(config_file).stem
-    output_file = Path(__file__).parent.parent / "docs" / "quarto_files" / f"{config_file_name}_{date}.qmd"
-    with open(output_file, 'w') as f:
-        f.write(quarto_content)
 
 if __name__ == "__main__":
     # Use fire to create a command line interface
     fire.Fire(generate_quarto_file)
-    # Print a message indicating that the script has finished running
     print("Quarto file generation complete.")

@@ -1,5 +1,5 @@
-import json
 from pathlib import Path
+from typing import Optional, Union
 
 import fire
 
@@ -26,9 +26,11 @@ def decide_which_project_to_use():
     return "COT_cannula_GAD2_data"
 
 
-def generate_temphum_quarto_file(date: str) -> Path:
+def generate_temphum_quarto_file(date: str, docs_path: Optional[Union[str, Path]] = None) -> Path:
     """
-    Generates a quarto file for the temperature and humidity report.
+    Generates the quarto file of the temperature and humidity report, in
+    <docs_path>/temperature_and_humidity/ (docs_path defaults to the docs
+    folder of this repository), and returns its path.
     """
     setup_name = decide_which_setup_to_use()
     quarto_template_general_path = Path(__file__).parent / 'quarto_templates' / 'temperature_humidity_general_template.txt'
@@ -60,7 +62,9 @@ def generate_temphum_quarto_file(date: str) -> Path:
     quarto_content += '\n' + ":::"
 
     # write the final content to a .qmd file
-    output_file = Path(__file__).parent.parent / "docs" / "temperature_and_humidity" / "temperature_and_humidity.qmd"
+    docs_path = Path(docs_path) if docs_path is not None else Path(__file__).parent.parent / "docs"
+    output_file = docs_path / "temperature_and_humidity" / "temperature_and_humidity.qmd"
+    output_file.parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, 'w') as f:
         f.write(quarto_content)
 
