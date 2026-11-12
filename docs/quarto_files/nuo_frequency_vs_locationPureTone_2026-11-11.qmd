@@ -1,0 +1,814 @@
+---
+title: "📊 frequency_vs_locationPureTone_data 2026-11-11 Report"
+date: today
+format:
+  html:
+    theme: lux
+    toc: true
+    toc-depth: 2
+    page-layout: custom
+    code-tools: false
+    smooth-scroll: true
+    anchor-sections: true
+    # figures at normal resolution (the default, retina, doubles it: 4x the size)
+    fig-format: png
+    fig-dpi: 96
+execute:
+  echo: false
+  warning: false
+  message: false
+  error: true
+  fig-align: center
+jupyter: python3
+---
+```{=html}
+<style>
+  .section-title { margin: 28px 0 10px; padding: 8px 14px; border-left: 5px solid #2a3f5f;
+                   background: #f3f5f9; border-radius: 0 6px 6px 0; }
+  .section-title h3 { margin: 0; font-size: 1.25rem; color: #2a3f5f; }
+  .section-title .nav-days { margin-top: 4px; font-size: 0.9rem; }
+  .section-title .nav-days a { margin-right: 16px; }
+</style>
+<script>
+// links such as report.html#NUO077 open the tab of that subject, and the
+// address shows the tab that is open (so that it can be shared)
+document.addEventListener("DOMContentLoaded", function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll(".panel-tabset .nav-link"));
+  function showTab(name) {
+    var link = links.find(function (l) { return l.textContent.trim() === name; });
+    if (!link) { return false; }
+    if (window.bootstrap && bootstrap.Tab) { bootstrap.Tab.getOrCreateInstance(link).show(); } else { link.click(); }
+    return true;
+  }
+  var name = decodeURIComponent(window.location.hash.slice(1));
+  if (name && showTab(name)) { window.scrollTo(0, 0); }
+  links.forEach(function (link) {
+    link.addEventListener("shown.bs.tab", function () {
+      history.replaceState(null, "", "#" + encodeURIComponent(link.textContent.trim()));
+    });
+  });
+});
+</script>
+```
+
+::: {.panel-tabset}
+# Overview
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: import_libraries
+# Every cell below shows a message instead of stopping the report if
+# something fails; the failures are listed in the Problems tab.
+import logging
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from IPython.display import Markdown, clear_output, display
+
+from lecilab_behavior_analysis.figure_maker import session_summary_figure, subject_progress_figure
+from lecilab_behavior_analysis.io.loading import load_project_logs, load_project_trials
+from lecilab_behavior_analysis.reports import overview
+
+logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
+clear_output(wait=True)
+
+
+def section_title(title, report_name="", date=None, mouse=None):
+    """
+    Title of a section of the tab of a subject. With report_name (daily
+    reports), links to the same subject in the reports of the previous and
+    next days.
+    """
+    import glob
+    import html as html_text
+    import re
+
+    from IPython.display import HTML
+
+    nav = ""
+    if report_name and date:
+        pattern = re.compile(re.escape(report_name) + r"_(\d{4}-\d{2}-\d{2})\.html$")
+        days = sorted(m.group(1) for f in glob.glob(f"{report_name}_*.html") if (m := pattern.match(f)))
+        before = [d for d in days if d < date]
+        after = [d for d in days if d > date]
+        # the next report is usually made the next day
+        next_day = after[0] if after else (pd.to_datetime(date) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+        target = f"#{mouse}" if mouse else ""
+        links = []
+        if before:
+            links.append(f'<a href="{report_name}_{before[-1]}.html{target}">&larr; {before[-1]}</a>')
+        links.append(f'<a href="{report_name}_{next_day}.html{target}">{next_day} &rarr;</a>')
+        nav = f'<div class="nav-days">{"".join(links)}</div>'
+    display(HTML(f'<div class="section-title"><h3>{html_text.escape(title)}</h3>{nav}</div>'))
+
+
+def show(fig):
+    """Displays a figure once (matplotlib or plotly) and closes matplotlib figures."""
+    display(fig)
+    plt.close("all")
+
+
+# panels or cells that could not be generated, shown in the Problems tab
+problems = {}
+overview.reset_failed_cells()
+```
+
+```{python}
+#| label: define_variables
+report_date = "2026-11-11"
+max_date = pd.to_datetime(report_date) + pd.Timedelta(days=1)
+project = "frequency_vs_locationPureTone_data"
+subjects = ['NUO066', 'NUO067', 'NUO068', 'NUO069', 'NUO070', 'NUO071', 'NUO072', 'NUO073', 'NUO074', 'NUO075', 'NUO076', 'NUO077']
+# setups (boxes) to read events and sessions summary from; None: every setup
+# found in the project folder (folders with events.csv or sessions_summary.csv)
+setups = None
+```
+
+```{python}
+#| label: load_data
+# events and sessions summary of every setup, together (None if there are none)
+events_df, sessions_summary_df, setups = load_project_logs(project, max_date, setups=setups)
+# trials of every subject, prepared for the figures (subjects without data are skipped)
+df = load_project_trials(project, subjects, max_date, window=50)
+loaded = sorted(df["subject"].unique()) if not df.empty else []
+notes = []
+missing_subjects = [s for s in subjects if s not in loaded]
+if missing_subjects:
+    notes.append(f"No trials found for: {', '.join(missing_subjects)}")
+if events_df is None or sessions_summary_df is None:
+    notes.append(f"No events or sessions summary found in the setups of {project} ({', '.join(setups) or 'none'})")
+display(Markdown(f"Setups: {', '.join(s or project for s in setups) or 'none found'}."))
+# archive: what this report shows (empty for daily reports)
+archive_note = ""
+if archive_note:
+    display(Markdown(f"**{archive_note}**"))
+if notes:
+    display(Markdown("**Note:** " + ". ".join(notes) + "."))
+```
+
+Corridor plot of the last 4 days
+```{python}
+#| label: make_corridor_plot
+@overview.never_raises("Corridor plot", "matplotlib")
+def corridor():
+    from village.plots.corridor_plot import corridor_plot
+
+    if events_df is None:
+        raise FileNotFoundError(f"no events found for {project}")
+    return corridor_plot(
+        df=events_df,
+        subjects=subjects,
+        width=15,
+        height=3,
+        ndays=4,
+        from_date=max_date + pd.Timedelta(days=0.5),
+    )
+
+show(corridor())
+```
+
+Performance over time for all mice
+```{python}
+#| label: reactive_performance_plot_for_all_mice
+show(overview.performance_over_trials_figure(df))
+```
+
+```{python}
+#| label: generate_TV_report
+show(overview.tv_report_table(events_df, sessions_summary_df, hours=24))
+```
+
+```{python}
+#| label: generate_training_stages_table
+show(overview.trials_by_stage_table(df))
+```
+
+```{python}
+#| label: get_trials_and_performance_of_last_days
+show(overview.last_days_table(df, n_days=3))
+```
+
+Behavioral Box occupancy and training times heatmap
+```{python}
+#| label: box_occupancy_and_training_times
+show(overview.box_occupancy_figure(df))
+```
+
+Overall number of trials and performance for the whole training cohort
+```{python}
+#| label: overall_trials_and_performance
+show(overview.cohort_trials_and_performance_figure(df))
+```
+
+# NUO066
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO066
+mouse = "NUO066"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO066
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO066
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO067
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO067
+mouse = "NUO067"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO067
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO067
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO068
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO068
+mouse = "NUO068"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO068
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO068
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO069
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO069
+mouse = "NUO069"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO069
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO069
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO070
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO070
+mouse = "NUO070"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO070
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO070
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO071
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO071
+mouse = "NUO071"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO071
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO071
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO072
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO072
+mouse = "NUO072"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO072
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO072
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO073
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO073
+mouse = "NUO073"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO073
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO073
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO074
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO074
+mouse = "NUO074"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO074
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO074
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO075
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO075
+mouse = "NUO075"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO075
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO075
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO076
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO076
+mouse = "NUO076"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO076
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO076
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# NUO077
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+```{python}
+#| label: subject_dates_for_NUO077
+mouse = "NUO077"
+# day shown for this subject: the report date, or (archive) its last day with data
+subject_date = "2026-11-11"
+# None: the session(s) of subject_date; a number: the last hours of training (archive)
+session_hours = None
+subject_df = df[df["subject"] == mouse] if not df.empty else df
+if not subject_df.empty:
+    subject_df = subject_df[subject_df["date"] < pd.to_datetime(subject_date) + pd.Timedelta(days=1)]
+```
+
+```{python}
+#| label: date_summary_for_NUO077
+if subject_df.empty:
+    sdf, period = subject_df, subject_date
+elif session_hours is None:
+    sdf, period = subject_df[subject_df["year_month_day"] == subject_date], subject_date
+else:
+    # sessions that started in the last session_hours hours of training
+    sdf = subject_df[subject_df["date"] >= subject_df["date"].max() - pd.Timedelta(hours=session_hours)]
+    period = f"last {session_hours} hours of training ({sdf['date'].min():%Y-%m-%d %H:%M} to {sdf['date'].max():%Y-%m-%d %H:%M})"
+section_title(f"Sessions of {period}", "nuo_frequency_vs_locationPureTone", subject_date, mouse)
+if sdf.empty:
+    display(Markdown(f"{mouse} did not train on {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} session of {subject_date}", "matplotlib")(session_summary_figure)(
+        sdf, perf_window=50, width=15, height=10
+    )
+    problems[f"{mouse} session of {subject_date}"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+```{python}
+#| label: subject_summary_for_NUO077
+section_title(f"Training history up to {subject_date}")
+if subject_df.empty:
+    display(Markdown(f"No trials for {mouse} up to {subject_date}."))
+else:
+    fig = overview.never_raises(f"{mouse} training history", "matplotlib")(subject_progress_figure)(
+        subject_df, perf_window=100, summary_matrix_plot=False, events_df=events_df
+    )
+    problems[f"{mouse} training history"] = getattr(fig, "panel_problems", [])
+    show(fig)
+```
+
+# Problems
+
+[Go back home](https://learningcircuitslab.github.io/village-report-generator/index.html)
+
+Panels and cells of this report that could not be generated (they show a red message where they should be).
+```{python}
+#| label: problems_of_this_report
+show(overview.problems_table({"Overview": overview.failed_cells(), **problems}))
+```
+
+:::
